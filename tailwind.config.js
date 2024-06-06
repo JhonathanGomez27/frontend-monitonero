@@ -10,7 +10,7 @@ const generatePalette = require(path.resolve(__dirname, ('src/@fuse/tailwind/uti
  * Tailwind-like color palettes automatically
  */
 const customPalettes = {
-    brand: generatePalette('#2196F3')
+    brand: generatePalette('#c99f4f')
 };
 
 /**
@@ -267,7 +267,11 @@ const config = {
                         }
                     }
                 }
-            })
+            }),
+            backgroundImage: {
+                'capitolio': "url('https://www.revistacredencial.com/sites/default/files/corradine_angulo.jpg')",
+                'puntos': "linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.5) 100%), radial-gradient(circle, rgba(0, 0, 0, 0.1) 10%, rgba(0, 0, 0, 0) 30%)"
+            }
         }
     },
     corePlugins: {
