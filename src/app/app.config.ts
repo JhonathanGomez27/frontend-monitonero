@@ -12,6 +12,7 @@ import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { mockApiServices } from 'app/mock-api';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -25,19 +26,19 @@ export const appConfig: ApplicationConfig = {
         // Material Date Adapter
         {
             provide : DateAdapter,
-            useClass: LuxonDateAdapter,
+            useClass: MomentDateAdapter,
         },
         {
             provide : MAT_DATE_FORMATS,
             useValue: {
                 parse  : {
-                    dateInput: 'D',
+                    dateInput: 'DD/MM/YYYY',
                 },
                 display: {
-                    dateInput         : 'DDD',
-                    monthYearLabel    : 'LLL yyyy',
-                    dateA11yLabel     : 'DD',
-                    monthYearA11yLabel: 'LLLL yyyy',
+                    dateInput         : 'DD/MM/YYYY',
+                    monthYearLabel    : 'MMM YYYY',
+                    dateA11yLabel     : 'LL',
+                    monthYearA11yLabel: 'MMMM-YYYY',
                 },
             },
         },
@@ -85,7 +86,7 @@ export const appConfig: ApplicationConfig = {
                 services: mockApiServices,
             },
             fuse   : {
-                layout : 'classy',
+                layout : 'modern',
                 scheme : 'light',
                 screens: {
                     sm: '600px',
@@ -93,7 +94,7 @@ export const appConfig: ApplicationConfig = {
                     lg: '1280px',
                     xl: '1440px',
                 },
-                theme  : 'theme-default',
+                theme  : 'theme-brand',
                 themes : [
                     {
                         id  : 'theme-default',

@@ -1,0 +1,96 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+
+    <div class="p-6 bg-white w-full flex justify-between">
+        <div class="flex flex-row gap-3 items-center">
+            <a class="cursor-pointer p-2 flex items-center rounded-none bg-gray-100 " mat-flat-button [routerLink]="['../']">
+                <mat-icon class="text-current icon-size-4 mr-2" [svgIcon]="'mat_outline:arrow_back_ios'"></mat-icon>
+                Volver
+            </a>
+            <!-- <h2 class="sm:text-4xl font-semibold text-primary-700 text-2xl">Busqueda</h2> -->
+        </div>
+        <div class="flex items-center md:hidden">
+            <button mat-icon-button (click)="matDrawer.toggle()">
+                <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <mat-drawer-container class="flex-auto h-full">
+        <!-- Drawer -->
+        <mat-drawer class="w-80 dark:bg-gray-900" [autoFocus]="false" [mode]="drawerMode" [opened]="drawerOpened" #matDrawer>
+            <!-- Boton crear sesion -->
+            <div class="w-full flex justify-center">
+                <button mat-flat-button (click)="crearSesionDialog()" class="text-primary border-solid border font-bold hover:bg-primary hover:bg-none hover:text-white">
+                    <mat-icon class="text-current icon-size-6 mr-2" [svgIcon]="'heroicons_outline:plus-small'"></mat-icon>
+                    Crear sesion
+                </button>
+            </div>
+
+            <!-- informacion comision -->
+            <div class="w-full pt-8 px-4">
+                <div class="w-full flex justify-start">
+                    <h2 class="font-bold text-2xl">Comision Primera Salon Boyaca</h2>
+                </div>
+            </div>
+        </mat-drawer>
+
+        <!-- Drawer content -->
+        <mat-drawer-content class="flex flex-col bg-white">
+            <!-- titulo -->
+            <div class="p-6">
+                <h2 class="font-bold text-4xl text-primary-600">Sesiones</h2>
+            </div>
+
+            <div class="px-6">
+
+                <!-- fecha -->
+                <div class="w-full justify-start py-4">
+                    <h3 class="text-secondary text-lg">01 de Junio de 2024</h3>
+                </div>
+                <!-- sesions list -->
+                <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <ng-container *ngFor="let item of [1,2,3,4,5]">
+
+                        <!-- card -->
+                        <div class="w-full p-4 border border-solid border-gray-200 rounded-md hover:shadow-inner">
+                            <!-- titulo -->
+                            <div class="flex flex-col justify-start">
+                                <div class="flex flex-row justify-between items-center gap-2">
+                                    <h2 class="text-xl font-semibold">
+                                        Nombre sesion de alguna tema prueba
+                                    </h2>
+                                    <div class="flex justify-center">
+                                        <div class="p-4 bg-gray-400  rounded-full"></div>
+                                    </div>
+                                </div>
+                                <h3 class="flex justify-start">
+                                    23 de Junio de 2024 - 10:00 am
+                                </h3>
+                            </div>
+
+                            <!-- informcion -->
+                             <div class="flex flex-col mt-4">
+                                <!-- responsable -->
+                                <div class="w-full flex flex-col">
+                                    <h3 class="text-secondary text-lg">Responsable:</h3>
+                                    <h4 class="text-lg font-medium">Nombre del responsable</h4>
+                                </div>
+                             </div>
+
+                            <!-- acciones -->
+                            <div class="w-full flex flex-row justify-between gap-2 mt-4">
+                                <button mat-icon-button (click)="editarSesionDialog()">
+                                    <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="verSesion()">
+                                    <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:eye'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                    </ng-container>
+                </div>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

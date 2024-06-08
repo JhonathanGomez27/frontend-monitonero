@@ -26,7 +26,7 @@ export class UserComponent implements OnInit, OnDestroy
     /* eslint-enable @typescript-eslint/naming-convention */
 
     @Input() showAvatar: boolean = true;
-    user: User;
+    user: any;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -53,7 +53,7 @@ export class UserComponent implements OnInit, OnDestroy
         // Subscribe to user changes
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) =>
+            .subscribe((user: any) =>
             {
                 this.user = user;
 
