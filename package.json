@@ -33,6 +33,7 @@
         "luxon": "3.4.4",
         "moment": "^2.30.1",
         "ng-apexcharts": "1.8.0",
+        "ngx-material-timepicker": "^13.1.1",
         "ngx-quill": "24.0.2",
         "perfect-scrollbar": "1.5.5",
         "quill": "1.3.7",

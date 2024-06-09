@@ -1,0 +1,66 @@
+<h2 mat-dialog-title class="flex text-primary-600 font-bold text-3xl">{{title}}</h2>
+<mat-dialog-content>
+    <div class="w-full">
+        <form [formGroup]="sesionForm" autocomplete="false">
+
+            <!-- tema sesion -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Nombre Sesión</mat-label>
+                    <textarea [formControlName]="'tema'" id="tema" type="text" matInput required cdkTextareaAutosize></textarea>
+                    <mat-icon class="icon-size-5" matPrefix
+                        [svgIcon]="'heroicons_outline:document'"></mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- nombre responsable -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Responsable Sesión</mat-label>
+                    <input [formControlName]="'responsable'" id="responsable" type="text" matInput required>
+                    <mat-icon class="icon-size-5" matPrefix
+                        [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- fecha hora container -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- fecha sesion -->
+                <div class="sm:col-span-2">
+                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'" (click)="fromDatePicker.open()">
+                        <mat-label>Fecha Sesión</mat-label>
+                        <input matInput [matDatepicker]="fromDatePicker" [formControlName]="'fecha'" [placeholder]="'dd/mm/aaaa'">
+                        <mat-datepicker #fromDatePicker></mat-datepicker>
+                        <mat-icon class="icon-size-5" matPrefix
+                        [svgIcon]="'heroicons_outline:calendar-days'"></mat-icon>
+                        <mat-hint>(dd/mm/aaaa)</mat-hint>
+                    </mat-form-field>
+                </div>
+
+                <!-- hora sesion -->
+                <div class="sm:col-span-1">
+                    <mat-form-field class="w-full">
+                        <mat-label>Hora Sesión</mat-label>
+                        <input [ngxTimepicker]="picker" matInput required [formControlName]="'hora'">
+                        <ngx-material-timepicker #picker [theme]="newTheme" #timepickerWithButtons [cancelBtnTmpl]="cancelBtn"
+                        [confirmBtnTmpl]="confirmBtn"></ngx-material-timepicker>
+                        <mat-icon class="icon-size-5" matPrefix
+                        [svgIcon]="'heroicons_outline:clock'"></mat-icon>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions class="flex justify-between mt-4">
+    <button mat-button (click)="cerrarDialogo()" class="text-black hover:bg-black hover:text-white">Cancelar</button>
+    <button mat-flat-button class="text-white hover:bg-white hover:text-primary-600 border-2 rounded-md hover:border-solid" (click)="guardarSesion()" [color]="'primary'">Guardar</button>
+</mat-dialog-actions>
+
+
+<ng-template #cancelBtn>
+    <button mat-flat-button class="mr-3 font-bold text-primary">Cancelar</button>
+</ng-template>
+<ng-template #confirmBtn>
+    <button mat-flat-button class="font-bold text-primary">Aceptar</button>
+</ng-template>

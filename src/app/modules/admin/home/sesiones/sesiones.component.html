@@ -29,7 +29,7 @@
             <!-- informacion comision -->
             <div class="w-full pt-8 px-4">
                 <div class="w-full flex justify-start">
-                    <h2 class="font-bold text-2xl">Comision Primera Salon Boyaca</h2>
+                    <h2 class="font-bold text-2xl">Comisión Primera Salon Boyaca</h2>
                 </div>
             </div>
         </mat-drawer>
@@ -82,7 +82,7 @@
                                 <button mat-icon-button (click)="editarSesionDialog()">
                                     <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                                 </button>
-                                <button mat-icon-button (click)="verSesion()">
+                                <button mat-icon-button [routerLink]="['./', 1]">
                                     <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:eye'"></mat-icon>
                                 </button>
                             </div>

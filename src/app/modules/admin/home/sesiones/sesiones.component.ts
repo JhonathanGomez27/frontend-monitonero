@@ -19,6 +19,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet,} from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalCrearEditarSesionComponent } from './modals/modal-crear-editar-sesion/modal-crear-editar-sesion.component';
 
 @Component({
   selector: 'app-sesiones',
@@ -37,12 +39,14 @@ export class SesionesComponent implements OnInit, OnDestroy{
     constructor(
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _changeDetectorRef: ChangeDetectorRef,
-        private titleService: Title,
+        private titleService: Title, public dialog: MatDialog,
     ){
 
     }
 
     ngOnInit(): void {
+        this.titleService.setTitle('Portal de Monitoreo | Comisión Primera de Boyaca');
+
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$.pipe(takeUntil(this._unsubscribeAll)).subscribe(
             ({matchingAliases}) =>{
@@ -81,7 +85,14 @@ export class SesionesComponent implements OnInit, OnDestroy{
     // Methods dialogs
     //-----------------------------------
     crearSesionDialog(): void {
-        console.log('Crear sesion');
+        const dialogRef = this.dialog.open(ModalCrearEditarSesionComponent, {
+            width: '600px',
+            data: {accion: 'crear', title: 'Crear sesión'}
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+        });
     }
 
     editarSesionDialog(): void {
