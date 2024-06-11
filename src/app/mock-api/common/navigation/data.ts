@@ -7,7 +7,8 @@ export const defaultNavigation: FuseNavigationItem[] = [
         title: 'Grabaciones',
         type : 'basic',
         icon : 'heroicons_outline:video-camera',
-        link : '/grabaciones'
+        link : '/grabaciones',
+        roles: ['admin', 'programador', 'operario', 'monitor']
     }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
@@ -34,6 +35,7 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         title: 'Grabaciones',
         type : 'basic',
         icon : 'heroicons_outline:video-camera',
-        link : '/grabaciones'
+        link : '/grabaciones',
+        roles: ['admin', 'programador', 'operario', 'monitor']
     }
 ];

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
+import { environment } from 'environments/environment';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
@@ -10,6 +11,9 @@ export class AuthService
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
+
+    private _url = environment.urlAuth;
+    private _urlLogOut = environment.url;
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -25,7 +29,22 @@ export class AuthService
 
     get accessToken(): string
     {
+        const token = localStorage.getItem('accessToken') ?? '';
+        if(token === 'undefined'){
+            this.signOut();
+            location.reload();
+        }
         return localStorage.getItem('accessToken') ?? '';
+    }
+
+    set refreshToken(token: string)
+    {
+        localStorage.setItem('refreshToken', token);
+    }
+
+    get refreshToken(): string
+    {
+        return localStorage.getItem('refreshToken') ?? '';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -65,11 +84,12 @@ export class AuthService
             return throwError('User is already logged in.');
         }
 
-        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
+        return this._httpClient.post(`${this._url}signin`, credentials).pipe(
             switchMap((response: any) =>
             {
                 // Store the access token in the local storage
                 this.accessToken = response.accessToken;
+                this.refreshToken = response.refreshToken;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
@@ -89,9 +109,7 @@ export class AuthService
     signInUsingToken(): Observable<any>
     {
         // Sign in using the token
-        return this._httpClient.post('api/auth/sign-in-with-token', {
-            accessToken: this.accessToken,
-        }).pipe(
+        return this._httpClient.get(`${this._url}refresh`).pipe(
             catchError(() =>
 
                 // Return false
@@ -99,17 +117,9 @@ export class AuthService
             ),
             switchMap((response: any) =>
             {
-                // Replace the access token with the new one if it's available on
-                // the response object.
-                //
-                // This is an added optional step for better security. Once you sign
-                // in using the token, you should generate a new one on the server
-                // side and attach it to the response object. Then the following
-                // piece of code can replace the token with the refreshed one.
-                if ( response.accessToken )
-                {
-                    this.accessToken = response.accessToken;
-                }
+                // Store the access token in the local storage
+                this.accessToken = response.accesstoken;
+                this.refreshToken = response.refreshToken;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
@@ -128,12 +138,14 @@ export class AuthService
      */
     signOut(): Observable<any>
     {
+
+        this._userService.user = null;
+
         // Remove the access token from the local storage
         localStorage.removeItem('accessToken');
-
+        localStorage.removeItem('refreshToken')
         // Set the authenticated flag to false
-        this._authenticated = false;
-
+        this._authenticated = false
         // Return the observable
         return of(true);
     }
@@ -183,5 +195,9 @@ export class AuthService
 
         // If the access token exists, and it didn't expire, sign in using it
         return this.signInUsingToken();
+    }
+
+    closeSession(): Observable<any> {
+        return this._httpClient.get(`${this._urlLogOut}usuarios/logout`);
     }
 }

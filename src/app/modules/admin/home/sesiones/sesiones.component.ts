@@ -21,11 +21,12 @@ import { ActivatedRoute, Router, RouterLink, RouterOutlet,} from '@angular/route
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalCrearEditarSesionComponent } from './modals/modal-crear-editar-sesion/modal-crear-editar-sesion.component';
+import { ShowForRolesDirective } from 'app/core/directives/show-for-roles.directive';
 
 @Component({
   selector: 'app-sesiones',
   standalone: true,
-  imports: [CommonModule, MatSidenavModule, MatRippleModule, NgClass, MatIconModule, NgIf, NgFor, MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatRadioModule, FormsModule, MatDatepickerModule, MatSelectModule, TitleCasePipe, MatMenuModule, MatPaginatorModule, RouterOutlet, RouterLink, ReactiveFormsModule, MatProgressSpinnerModule,],
+  imports: [CommonModule, MatSidenavModule, MatRippleModule, NgClass, MatIconModule, NgIf, NgFor, MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatRadioModule, FormsModule, MatDatepickerModule, MatSelectModule, TitleCasePipe, MatMenuModule, MatPaginatorModule, RouterOutlet, RouterLink, ReactiveFormsModule, MatProgressSpinnerModule, ShowForRolesDirective],
   templateUrl: './sesiones.component.html'
 })
 export class SesionesComponent implements OnInit, OnDestroy{

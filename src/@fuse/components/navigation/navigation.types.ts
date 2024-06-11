@@ -1,6 +1,6 @@
 import { IsActiveMatchOptions, Params, QueryParamsHandling } from '@angular/router';
 
-export interface FuseNavigationItem
+export interface  FuseNavigationItem
 {
     id?: string;
     title?: string;
@@ -44,6 +44,7 @@ export interface FuseNavigationItem
     };
     children?: FuseNavigationItem[];
     meta?: any;
+    roles?: any[];
 }
 
 export type FuseVerticalNavigationAppearance =

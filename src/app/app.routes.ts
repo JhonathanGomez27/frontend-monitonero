@@ -3,6 +3,7 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
+import { hasRoleGuard } from './core/auth/guards/has-role.guard';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -74,8 +75,18 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'grabaciones', loadChildren: () => import('app/modules/admin/home/home.routes')},
-            {path: '**', redirectTo: 'grabaciones'}
+            {
+                path: 'grabaciones',
+                canActivate: [hasRoleGuard],
+                data: {
+                    expectedRole: ['admin', 'programador', 'operario', 'monitor']
+                },
+                loadChildren: () => import('app/modules/admin/home/home.routes')
+            },
+            {
+                path: '**',
+                redirectTo: 'grabaciones'
+            }
         ]
     }
 ];
