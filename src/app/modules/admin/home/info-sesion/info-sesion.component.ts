@@ -1,21 +1,24 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { HomeService } from '../home.service';
+import { ShowForRolesDirective } from 'app/core/directives/show-for-roles.directive';
 
 @Component({
   selector: 'app-info-sesion',
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule, ShowForRolesDirective],
   templateUrl: './info-sesion.component.html',
 })
 export class InfoSesionComponent implements OnInit, OnDestroy{
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-    estadoSesion: string = 'StandBy';
+    estadoSesion: string = 'No transmitiendo';
+
+    sesion: any = {};
 
     constructor(
         private _fuseConfirmationService: FuseConfirmationService,
@@ -24,6 +27,13 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
     ) { }
 
     ngOnInit(): void {
+
+        this._homeService.sesion$.pipe(takeUntil(this._unsubscribeAll)).subscribe((sesion) => {
+            this.sesion = sesion.data;
+            this.estadoSesion = sesion.data.estado_transmision;
+
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     ngOnDestroy(): void {
@@ -61,7 +71,39 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
         // Subscribe to afterClosed from the dialog reference
         dialogRef.afterClosed().subscribe((result) => {
             if(result === 'confirmed'){
+                this.updateEstadoSesionTerminarSesion();
             }
         });
+    }
+
+    updateSesionData(){
+        this._homeService.getSesionById(this.sesion.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+            (response:any) => {
+                this._homeService.sesion = response;
+                this._changeDetectorRef.markForCheck();
+            },(error) => {
+                console.log(error);
+            }
+        );
+    }
+
+    updateEstadoSesionIniciarSesion(){
+        this._homeService.iniciarSesion(this.sesion.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+            (response:any) => {
+                this.updateSesionData();
+            },(error) => {
+                console.log(error);
+            }
+        );
+    }
+
+    updateEstadoSesionTerminarSesion(){
+        this._homeService.terminarSesion(this.sesion.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+            (response:any) => {
+                this.updateSesionData();
+            },(error) => {
+                console.log(error);
+            }
+        );
     }
 }

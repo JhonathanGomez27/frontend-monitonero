@@ -7,10 +7,11 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, UntypedFormGroup, Valida
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMaterialTimepickerModule, NgxMaterialTimepickerTheme } from 'ngx-material-timepicker';
 import Swal from 'sweetalert2';
+import { HomeService } from '../../../home.service';
 
 @Component({
   selector: 'app-modal-crear-editar-sesion',
@@ -41,11 +42,16 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
 
     Toast: any;
 
+    sesionEditar: any = {};
+
+    minDate = new Date();
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<ModalCrearEditarSesionComponent>,
         private _formBuilder: FormBuilder,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _homeService: HomeService,
     ) {
         this.title = data.title;
         this.accion = data.accion;
@@ -68,6 +74,11 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
                 toast.addEventListener('mouseleave', Swal.resumeTimer);
             },
         });
+
+        if(data.accion === 'editar') {
+            this.sesionEditar = data.data;
+            this.sesionForm.patchValue(data.data)
+        }
     }
 
     ngOnInit() {}
@@ -96,14 +107,61 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
         const dataForm = this.sesionForm.getRawValue();
 
         let data = {
-            nombre : dataForm.tema,
+            tema : dataForm.tema,
             responsable : dataForm.responsable,
-            fecha : this.transformDate(dataForm.fecha._d),
-            hora : dataForm.hora,
+            fecha_inicio_sesion : this.transformDate(dataForm.fecha._d),
+            hora_inicio_sesion : dataForm.hora,
+            comision_id: this.data.comision
         }
 
         console.log(data);
+
+        return;
+
+        if(this.data.accion === 'crear') {
+            this.crearSesion(data);
+        }else{
+            this.editarSesion(data);
+        }
         // this.dialogRef.close('guardar');
+    }
+
+    crearSesion(data:any){
+        this._homeService.crearSesion(data).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+            (response:any) => {
+                if(response.ok){
+                    this.Toast.fire({
+                        icon: 'success',
+                        title: 'Sesión creada correctamente.'
+                    });
+                    this.dialogRef.close('guardar');
+                }
+            },(error) => {
+                this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al crear la sesión.'
+                });
+            }
+        );
+    }
+
+    editarSesion(data:any){
+        this._homeService.editarSesion(data, this.sesionEditar.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+            (response:any) => {
+                if(response.ok){
+                    this.Toast.fire({
+                        icon: 'success',
+                        title: 'Sesión editada correctamente.'
+                    });
+                    this.dialogRef.close('guardar');
+                }
+            },(error) => {
+                this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al editar la sesión.'
+                });
+            }
+        );
     }
 
     //-----------------------------------
@@ -115,5 +173,12 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
         const day = date.getDate();
 
         return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+    }
+
+
+    convertirDate(data: any): Date {
+        let dateN = new Date(data.replace(/-/g, '/'));
+        // console.log(dateN);
+        return dateN;
     }
 }

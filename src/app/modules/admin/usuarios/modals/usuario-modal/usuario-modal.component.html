@@ -1,0 +1,111 @@
+<h2 mat-dialog-title class="flex text-primary-600 font-bold text-3xl">{{title}}</h2>
+<mat-dialog-content>
+    <div class="w-full">
+
+        <form [formGroup]="usuarioForm" autocomplete="false">
+            <!-- nombre usuario -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Nombre</mat-label>
+                    <input [formControlName]="'nombre'" id="nombre" type="text" matInput required>
+                    <mat-icon class="icon-size-5" matPrefix
+                        [svgIcon]="'mat_outline:person_outline'"></mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- apellido usuario -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Apellido</mat-label>
+                    <input [formControlName]="'apellido'" id="apellido" type="text" matInput required autocomplete="one-time-code" role="presentation">
+                    <mat-icon class="icon-size-5" matPrefix
+                        [svgIcon]="'mat_outline:person_outline'"></mat-icon>
+                    <mat-error *ngIf="usuarioForm.get('apellido').hasError('required')">
+                        El apellido es requerido.
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- correo usuario -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Correo electronico</mat-label>
+                    <input [formControlName]="'correo'" id="field-1" name="field-1" type="email" matInput required autocomplete="one-time-code" role="presentation">
+                    <mat-icon class="icon-size-5" matPrefix
+                        [svgIcon]="'mat_outline:person_outline'"></mat-icon>
+                    <mat-error *ngIf="usuarioForm.get('correo').hasError('required')">
+                        El correo es requerido.
+                    </mat-error>
+                    <mat-error *ngIf="usuarioForm.get('correo').hasError('email')">
+                        Ingresa un correo electronico valido.
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Rol -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Rol</mat-label>
+                    <mat-select required [formControlName]="'rol'">
+                        <mat-option [value]="''" disabled>
+                            Seleccionar Rol
+                        </mat-option>
+                        <mat-option [value]="'admin'">
+                            Administrador
+                        </mat-option>
+                        <mat-option [value]="'programador'">
+                            Programador
+                        </mat-option>
+                        <mat-option [value]="'operario'">
+                            Operario
+                        </mat-option>
+                        <mat-option [value]="'monitor'">
+                            Monitor
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:users'"></mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- Password field -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Contraseña</mat-label>
+                    <input id="field-2" name="field-2" matInput type="password" [formControlName]="'password'" #passwordField autocomplete="one-time-code" role="presentation">
+                    <button mat-icon-button type="button" (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'" matSuffix>
+                        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                    </button>
+                    <mat-error *ngIf="usuarioForm.get('password').hasError('required')">
+                        La contraseña es requerida
+                    </mat-error>
+                    <mat-error *ngIf="usuarioForm.get('password').hasError('minlength')">
+                        La contraseña debe tener al menos 6 caracteres
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- confirm password -->
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Confirmar contraseña</mat-label>
+                    <input id="field-2-confirm" name="field-2" matInput type="password" [formControlName]="'passwordConfirm'" #passwordConfirmField autocomplete="one-time-code" role="presentation">
+                    <button mat-icon-button type="button" (click)="passwordConfirmField.type === 'password' ? passwordConfirmField.type = 'text' : passwordConfirmField.type = 'password'" matSuffix>
+                        <mat-icon class="icon-size-5" *ngIf="passwordConfirmField.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        <mat-icon class="icon-size-5" *ngIf="passwordConfirmField.type === 'text'" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                    </button>
+                    <mat-error *ngIf="usuarioForm.get('passwordConfirm').hasError('required')">
+                        La confirmacion de la contraseña es requerida
+                    </mat-error>
+                    <mat-error *ngIf="usuarioForm.get('passwordConfirm').hasError('mustMatch')">
+                        Las contraseñas deben coincidir
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </form>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions class="flex justify-between mt-4">
+  <button mat-button (click)="cerrarDialogo()" class="text-black hover:bg-black hover:text-white border-2 rounded-md border-solid">Cancelar</button>
+  <button mat-flat-button class="text-white hover:bg-white hover:text-primary-600 border-2 rounded-md hover:border-solid" (click)="guardarUsuario()" [color]="'primary'">Guardar</button>
+</mat-dialog-actions>

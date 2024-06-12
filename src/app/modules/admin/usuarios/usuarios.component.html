@@ -1,0 +1,78 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto bg-white" cdkScrollable>
+
+    <!-- Main -->
+    <div class="flex-auto p-6 sm:px-26 sm:py-10">
+
+        <!-- CONTENT GOES HERE -->
+        <div class="min-h-100">
+            <!-- Titulo -->
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center items-start mb-6 w-full p-4">
+                <h2 class="text-4xl font-semibold text-primary-700">Administrador de Usuarios</h2>
+                <button mat-flat-button class="group border-solid border-2 rounded-md border-primary hover:bg-primary hover:text-white text-primary font-semibold" (click)="abrirDialogoCrearUsuario()">
+                    <mat-icon [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                    &nbsp; Añadir Usuario
+                </button>
+            </div>
+
+            <!-- tabla usuarios -->
+            <div class="overflow-x-auto">
+                <table class="w-full" mat-table [dataSource]="dataSource">
+                    <!-- Columna id -->
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef> Id </th>
+                        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                    </ng-container>
+
+                    <!-- Columna Nombre -->
+                    <ng-container matColumnDef="nombre">
+                        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                        <td mat-cell *matCellDef="let element"> {{element.nombre}} {{element.apellido}}</td>
+                    </ng-container>
+
+                    <!-- Columna Email -->
+                    <ng-container matColumnDef="correo">
+                        <th mat-header-cell *matHeaderCellDef> Correo </th>
+                        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+                    </ng-container>
+
+                    <!-- Columna Rol -->
+                    <ng-container matColumnDef="rol">
+                        <th mat-header-cell *matHeaderCellDef> Rol </th>
+                        <td mat-cell *matCellDef="let element"> {{element.rol}} </td>
+                    </ng-container>
+
+                    <!-- Columna online -->
+                    <ng-container matColumnDef="online">
+                        <th mat-header-cell *matHeaderCellDef> Online </th>
+                        <td mat-cell *matCellDef="let element">
+                            <span class="text-xs font-semibold rounded-full px-2.5 py-1 bg-green-400" *ngIf="element.login_status"></span>
+                            <span class="text-xs font-semibold rounded-full px-2.5 py-1 bg-red-400" *ngIf="!element.login_status"></span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Columna Acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let element">
+                            <button mat-icon-button color="primary" class="hover:bg-gray-200" (click)="abrirDialogoEditarUsuario(element)">
+                                <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                            </button>
+                            <!-- <button mat-icon-button class="hover:bg-gray-200">
+                                <mat-icon [svgIcon]="'heroicons_outline:trash'" class="text-red-500"></mat-icon>
+                            </button> -->
+                        </td>
+                    </ng-container>
+
+                    <!-- Columnas -->
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+
+            <!-- paginador -->
+            <div class="w-full flex justify-end">
+                <mat-paginator [length]="totalUsuarios" [pageSize]="limit" [pageIndex]="page" aria-label="Seleccionar pagina de usuarios" showFirstLastButtons="true" (page)="handlePageEvent($event)"></mat-paginator>
+            </div>
+        </div>
+    </div>
+</div>

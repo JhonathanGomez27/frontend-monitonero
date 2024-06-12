@@ -19,7 +19,7 @@
         <!-- Drawer -->
         <mat-drawer class="w-80 dark:bg-gray-900" [autoFocus]="false" [mode]="drawerMode" [opened]="drawerOpened" #matDrawer>
             <!-- Boton crear sesion -->
-            <div class="w-full flex justify-center" *appShowForRoles="['programador']">
+            <div class="w-full flex justify-center" *appShowForRoles="['programador', 'monitoreo', 'admin']">
                 <button mat-flat-button (click)="crearSesionDialog()" class="text-primary border-solid border font-bold hover:bg-primary hover:bg-none hover:text-white">
                     <mat-icon class="text-current icon-size-6 mr-2" [svgIcon]="'heroicons_outline:plus-small'"></mat-icon>
                     Crear sesion
@@ -45,11 +45,17 @@
 
                 <!-- fecha -->
                 <div class="w-full justify-start py-4">
-                    <h3 class="text-secondary text-lg">01 de Junio de 2024</h3>
+                    <!-- <h3 class="text-secondary text-lg">01 de Junio de 2024</h3> -->
                 </div>
                 <!-- sesions list -->
                 <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    <ng-container *ngFor="let item of [1,2,3,4,5]">
+                    <ng-container *ngFor="let item of sesiones; let i = index; let first = first; let last = last">
+                        <!-- start of the day -->
+                        <!-- <ng-container *ngIf="first || (sesiones[i-1].fecha_inicio_sesion | date: 'd') !== (item.fecha_inicio_sesion | date: 'd')">
+                            <div class="w-full justify-start py-4">
+                                <h3 class="text-secondary text-lg">{{item.fecha_inicio_sesion | date:'longDate'}}</h3>
+                            </div>
+                        </ng-container> -->
 
                         <!-- card -->
                         <div class="w-full p-4 border border-solid border-gray-200 rounded-md hover:shadow-inner">
@@ -57,14 +63,19 @@
                             <div class="flex flex-col justify-start">
                                 <div class="flex flex-row justify-between items-center gap-2">
                                     <h2 class="text-xl font-semibold">
-                                        Nombre sesion de alguna tema prueba
+                                        {{item.tema}}
                                     </h2>
                                     <div class="flex justify-center">
-                                        <div class="p-4 bg-gray-400  rounded-full"></div>
+                                        <div  [ngClass]="{'bg-gray-400': item.estado_transmision === 'No transmitiendo'
+                                        ,'bg-yellow-500': item.estado_transmision === 'Preparado para grabar'
+                                        , 'bg-green-500': item.estado_transmision === 'Grabando'
+                                        , 'bg-red-500': item.estado_transmision === 'Transmisión finalizada'
+                                        }"
+                                        class="p-4 rounded-full"></div>
                                     </div>
                                 </div>
                                 <h3 class="flex justify-start">
-                                    23 de Junio de 2024 - 10:00 am
+                                    {{item.fecha_inicio_sesion | date:'longDate'}} - {{item.hora_inicio_sesion}}
                                 </h3>
                             </div>
 
@@ -73,22 +84,27 @@
                                 <!-- responsable -->
                                 <div class="w-full flex flex-col">
                                     <h3 class="text-secondary text-lg">Responsable:</h3>
-                                    <h4 class="text-lg font-medium">Nombre del responsable</h4>
+                                    <h4 class="text-lg font-medium">{{item.responsable}}</h4>
                                 </div>
                              </div>
 
                             <!-- acciones -->
                             <div class="w-full flex flex-row justify-between gap-2 mt-4">
-                                <button mat-icon-button (click)="editarSesionDialog()" *appShowForRoles="['programador']">
+                                <button mat-icon-button (click)="editarSesionDialog(item)" *appShowForRoles="['programador', 'monitoreo', 'admin']">
                                     <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                                 </button>
-                                <button mat-icon-button [routerLink]="['./', 1]">
+                                <button mat-icon-button [routerLink]="['./', item.id]">
                                     <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:eye'"></mat-icon>
                                 </button>
                             </div>
                         </div>
 
                     </ng-container>
+                </div>
+
+                <!-- content -->
+                <div class="w-full mt-3 flex justify-end">
+                    <mat-paginator [disabled]="loading" class="bg-transparent" [length]="total" [pageIndex]="page" [pageSize]="limit" [showFirstLastButtons]="true" (page)="handlePageEnvent($event)"></mat-paginator>
                 </div>
             </div>
         </mat-drawer-content>

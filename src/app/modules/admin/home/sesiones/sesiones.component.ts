@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation,} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, LOCALE_ID, OnDestroy, OnInit, ViewEncapsulation,} from '@angular/core';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { Location, NgClass, NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -22,12 +22,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalCrearEditarSesionComponent } from './modals/modal-crear-editar-sesion/modal-crear-editar-sesion.component';
 import { ShowForRolesDirective } from 'app/core/directives/show-for-roles.directive';
+import { HomeService } from '../home.service';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-sesiones',
   standalone: true,
   imports: [CommonModule, MatSidenavModule, MatRippleModule, NgClass, MatIconModule, NgIf, NgFor, MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatRadioModule, FormsModule, MatDatepickerModule, MatSelectModule, TitleCasePipe, MatMenuModule, MatPaginatorModule, RouterOutlet, RouterLink, ReactiveFormsModule, MatProgressSpinnerModule, ShowForRolesDirective],
-  templateUrl: './sesiones.component.html'
+  templateUrl: './sesiones.component.html',
 })
 export class SesionesComponent implements OnInit, OnDestroy{
 
@@ -37,16 +39,43 @@ export class SesionesComponent implements OnInit, OnDestroy{
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+    sesiones: any[] = [];
+    total: number = 0;
+
+    minDate: any;
+
+    //pagination variables
+    page: number = 0;
+    limit: number = environment.pagination;
+
+    loading: boolean = false;
+
     constructor(
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _changeDetectorRef: ChangeDetectorRef,
         private titleService: Title, public dialog: MatDialog,
+        private _homeService: HomeService,
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
     ){
-
+        this.minDate = new Date();
     }
 
     ngOnInit(): void {
         this.titleService.setTitle('Portal de Monitoreo | Comisión Primera de Boyaca');
+
+        this.activatedRoute.queryParams.subscribe(params => {
+            if(!params.page){
+                this.router.navigate([],{relativeTo: this.activatedRoute,queryParams: { page: '1' }});
+                this.page = 0;
+            }else{
+                this.page = parseInt(params.page) - 1;
+            }
+
+            // if(this.initial === 'init'){
+            //     this.aplicarFiltro(0);
+            // }
+        });
 
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$.pipe(takeUntil(this._unsubscribeAll)).subscribe(
@@ -67,6 +96,12 @@ export class SesionesComponent implements OnInit, OnDestroy{
                 this._changeDetectorRef.markForCheck();
             }
         );
+
+        this._homeService.sesiones$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
+            this.sesiones = response.data;
+            this.total = response.total;
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     ngOnDestroy(): void {
@@ -88,15 +123,52 @@ export class SesionesComponent implements OnInit, OnDestroy{
     crearSesionDialog(): void {
         const dialogRef = this.dialog.open(ModalCrearEditarSesionComponent, {
             width: '600px',
-            data: {accion: 'crear', title: 'Crear sesión'}
+            disableClose: true,
+            data: {accion: 'crear', title: 'Crear sesión', comision: 1},
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
+            if(result === 'guardar') this.obtenerSesiones(1);
         });
     }
 
-    editarSesionDialog(): void {
-        console.log('Editar sesion');
+    editarSesionDialog(sesion:any): void {
+        const dialogRef = this.dialog.open(ModalCrearEditarSesionComponent, {
+            width: '600px',
+            disableClose: true,
+            data: {accion: 'editar', title: 'Editar sesión', data: {tema: sesion.tema, fecha: sesion.fecha_inicio_sesion, hora: sesion.hora_inicio_sesion, responsable: sesion.responsable, id: sesion.id, comision: 1}}
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if(result === 'guardar') this.obtenerSesiones(1);
+        });
+    }
+
+    //-----------------------------------
+    // Methods http
+    //-----------------------------------
+
+    obtenerSesiones(pagina:any): void {
+        this.loading = true;
+
+        this._homeService.getAllSesionesPaginated(pagina).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+            (response:any) => {
+                this.loading = false;
+                this._homeService.sesiones = response;
+                this._changeDetectorRef.markForCheck();
+            },(error) => {
+                console.log(error);
+            }
+        );
+    }
+
+    //-----------------------------------
+    // Pagination
+    //-----------------------------------
+    handlePageEnvent(event: PageEvent): void {
+        let pagina = event.pageIndex + 1;
+        this.router.navigate([],{relativeTo: this.activatedRoute,queryParams: { page: pagina }});
+
+        this.obtenerSesiones(pagina);
     }
 }

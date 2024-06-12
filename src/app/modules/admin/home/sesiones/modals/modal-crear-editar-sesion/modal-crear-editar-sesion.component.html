@@ -29,7 +29,7 @@
                 <div class="sm:col-span-2">
                     <mat-form-field class="w-full" [subscriptSizing]="'dynamic'" (click)="fromDatePicker.open()">
                         <mat-label>Fecha Sesión</mat-label>
-                        <input matInput [matDatepicker]="fromDatePicker" [formControlName]="'fecha'" [placeholder]="'dd/mm/aaaa'">
+                        <input matInput [matDatepicker]="fromDatePicker" [formControlName]="'fecha'" [placeholder]="'dd/mm/aaaa'" [min]="minDate">
                         <mat-datepicker #fromDatePicker></mat-datepicker>
                         <mat-icon class="icon-size-5" matPrefix
                         [svgIcon]="'heroicons_outline:calendar-days'"></mat-icon>
@@ -41,7 +41,7 @@
                 <div class="sm:col-span-1">
                     <mat-form-field class="w-full">
                         <mat-label>Hora Sesión</mat-label>
-                        <input [ngxTimepicker]="picker" matInput required [formControlName]="'hora'">
+                        <input [ngxTimepicker]="picker" matInput required [formControlName]="'hora'" [format]="24">
                         <ngx-material-timepicker #picker [theme]="newTheme" #timepickerWithButtons [cancelBtnTmpl]="cancelBtn"
                         [confirmBtnTmpl]="confirmBtn"></ngx-material-timepicker>
                         <mat-icon class="icon-size-5" matPrefix

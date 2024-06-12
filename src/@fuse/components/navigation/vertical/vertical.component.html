@@ -35,10 +35,12 @@
                 </ng-container>
 
                 <!-- Basic -->
-                <ng-container *ngIf="item.type === 'basic'">
-                    <fuse-vertical-navigation-basic-item
-                        [item]="item"
-                        [name]="name"></fuse-vertical-navigation-basic-item>
+                <ng-container *appShowForRoles="item.roles">
+                    <ng-container *ngIf="item.type === 'basic'">
+                        <fuse-vertical-navigation-basic-item
+                            [item]="item"
+                            [name]="name"></fuse-vertical-navigation-basic-item>
+                    </ng-container>
                 </ng-container>
 
                 <!-- Collapsable -->

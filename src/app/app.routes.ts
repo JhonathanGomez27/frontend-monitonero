@@ -84,6 +84,22 @@ export const appRoutes: Route[] = [
                 loadChildren: () => import('app/modules/admin/home/home.routes')
             },
             {
+                path: 'logs',
+                canActivate: [hasRoleGuard],
+                data: {
+                    expectedRole: ['admin']
+                },
+                loadChildren: () => import('app/modules/admin/logs/logs.routes')
+            },
+            {
+                path: 'usuarios',
+                canActivate: [hasRoleGuard],
+                data: {
+                    expectedRole: ['admin']
+                },
+                loadChildren: () => import('app/modules/admin/usuarios/usuarios.routes')
+            },
+            {
                 path: '**',
                 redirectTo: 'grabaciones'
             }

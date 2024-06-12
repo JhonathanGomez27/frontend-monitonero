@@ -9,7 +9,23 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon : 'heroicons_outline:video-camera',
         link : '/grabaciones',
         roles: ['admin', 'programador', 'operario', 'monitor']
-    }
+    },
+    {
+        id   : 'usuarios',
+        title: 'Usuarios',
+        type : 'basic',
+        icon : 'heroicons_outline:cog-6-tooth',
+        link : '/usuarios',
+        roles: ['admin']
+    },
+    {
+        id   : 'logs',
+        title: 'Logs',
+        type : 'basic',
+        icon : 'heroicons_outline:newspaper',
+        link : '/logs',
+        roles: ['admin']
+    },
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {
@@ -37,5 +53,21 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         icon : 'heroicons_outline:video-camera',
         link : '/grabaciones',
         roles: ['admin', 'programador', 'operario', 'monitor']
-    }
+    },
+    {
+        id   : 'usuarios',
+        title: 'Usuarios',
+        type : 'basic',
+        icon : 'heroicons_outline:cog-6-tooth',
+        link : '/usuarios',
+        roles: ['admin']
+    },
+    {
+        id   : 'logs',
+        title: 'Logs',
+        type : 'basic',
+        icon : 'heroicons_outline:newspaper',
+        link : '/logs',
+        roles: ['admin']
+    },
 ];
