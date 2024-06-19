@@ -81,6 +81,13 @@ export class HomeService {
         return this._httpCliente.get(`${this.url}sesiones`, {params});
     }
 
+    getSesionesSinFiltro(page:any): Observable<any> {
+        let params = new HttpParams();
+        params = params.set('page', page);
+        params = params.set('limit', this.limit);
+        return this._httpCliente.get(`${this.url}sesiones/all`, {params});
+    }
+
     getSesionesByIdLoad(id: any): Observable<any> {
         return this._httpCliente.get(`${this.url}sesiones/${id}`).pipe(
             tap((response: any) => {
@@ -108,5 +115,36 @@ export class HomeService {
 
     terminarSesion(id: any): Observable<any> {
         return this._httpCliente.post(`${this.url}sesiones/finalizar/${id}`, {});
+    }
+
+    finRegistroAsistentes(id: any): Observable<any> {
+        return this._httpCliente.post(`${this.url}sesiones/fin_registro_asistentes/${id}`, {});
+    }
+
+    //-----------------------------------
+    // Funciones obs
+    //-----------------------------------
+    starObs(id:any): Observable<any> {
+        return this._httpCliente.get(`${this.url}obs/start/${id}`);
+    }
+
+    stopObs(id:any): Observable<any> {
+        return this._httpCliente.get(`${this.url}obs/finish/${id}`);
+    }
+
+    statisticsObs(): Observable<any> {
+        return this._httpCliente.get(`${this.url}obs/estadistics`);
+    }
+
+    changeFileNameRecord(id:any): Observable<any> {
+        return this._httpCliente.get(`${this.url}obs/change-record-name/${id}`);
+    }
+
+    takeScreenShot(): Observable<any> {
+        return this._httpCliente.get(`${this.url}obs/take-screenshot`);
+    }
+
+    getStatusSesion(data:any): Observable<any> {
+        return this._httpCliente.post(`${this.url}statussesiones/findOne`, data);
     }
 }

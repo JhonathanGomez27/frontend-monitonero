@@ -41,7 +41,7 @@
                 <div class="sm:col-span-1">
                     <mat-form-field class="w-full">
                         <mat-label>Hora Sesión</mat-label>
-                        <input [ngxTimepicker]="picker" matInput required [formControlName]="'hora'" [format]="24">
+                        <input [ngxTimepicker]="picker" matInput required [formControlName]="'hora'">
                         <ngx-material-timepicker #picker [theme]="newTheme" #timepickerWithButtons [cancelBtnTmpl]="cancelBtn"
                         [confirmBtnTmpl]="confirmBtn"></ngx-material-timepicker>
                         <mat-icon class="icon-size-5" matPrefix

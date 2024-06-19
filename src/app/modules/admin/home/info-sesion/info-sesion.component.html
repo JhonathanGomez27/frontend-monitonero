@@ -5,11 +5,18 @@
 
         <!-- CONTENT GOES HERE -->
         <div class="min-h-100">
+            <div class="flex flex-row gap-3 items-center">
+                <a class="cursor-pointer p-2 flex items-center rounded-none bg-gray-100 " mat-flat-button [routerLink]="['../']">
+                    <mat-icon class="text-current icon-size-4 mr-2" [svgIcon]="'mat_outline:arrow_back_ios'"></mat-icon>
+                    Volver
+                </a>
+                <!-- <h2 class="sm:text-4xl font-semibold text-primary-700 text-2xl">Busqueda</h2> -->
+            </div>
             <!-- Titulo -->
             <div class="flex flex-col items-start w-full p-4">
                 <div class="w-full flex flex-row justify-between items-center gap-2">
                     <h2 class="text-4xl font-semibold text-primary-700">{{sesion.tema}}</h2>
-                    <div class="flex justify-center">
+                    <div class="flex justify-center" >
                         <div [ngClass]="{'bg-gray-400': estadoSesion === 'No transmitiendo'
                                         ,'bg-yellow-500': estadoSesion === 'Preparado para grabar'
                                         , 'bg-green-500': estadoSesion === 'Grabando'
@@ -22,23 +29,106 @@
 
             <!-- responsable -->
             <div class="flex flex-col sm:flex-row justify-between items-start w-full p-4">
-                <h3 class="text-secondary text-2xl font-bold">Responsable:</h3>
-                <h4 class="text-2xl font-medium">{{sesion.responsable}}</h4>
+                <div class="flex flex-col">
+                    <h3 class="text-secondary text-2xl font-bold">Responsable:</h3>
+                    <h4 class="text-2xl font-medium">{{sesion.responsable}}</h4>
+                </div>
+                <div class="flex w-full justify-end items-center">
+                    <button mat-icon-button (click)="getStatisticsData(true)" *appShowForRoles="['monitoreo', 'admin']">
+                        <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full p-4 flex flex-row gap-2" *ngIf="estadoSesion === 'Transmisión finalizada'">
+                <h2 class="text-secondary text-2xl font-bold">Estado actúal de procesamiento : </h2>
+                <h3 class="text-2xl font-medium">{{statusFile}}</h3>
             </div>
 
             <!-- contenido -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <!-- contenedor imagen -->
                 <div class="w-full md:col-span-3 p-4 border border-gray-200">
+                    <!-- estado transmision -->
+                    <div class="grid grid-cols-4 gap-2">
+                        <!--No transmitiendo  -->
+                        <div class="flex flex-col">
+                            <div [ngClass]="{'bg-gray-400 outline outline-offset-2 outline-gray-400': estadoSesion === 'No transmitiendo', 'bg-gray-200': estadoSesion !== 'No transmitiendo'}" class="p-2"></div>
+                            <div class="mt-2" *ngIf="estadoSesion === 'No transmitiendo'">
+                                <h3 class="text-center text-sm">No transmitiendo</h3>
+                            </div>
+                        </div>
+                        <!-- Preparado para grabar -->
+                        <div class="flex flex-col">
+                            <div [ngClass]="{'bg-yellow-500 outline outline-offset-2 outline-yellow-400': estadoSesion === 'Preparado para grabar', 'bg-gray-100': estadoSesion !== 'Preparado para grabar'}" class="p-2"></div>
+                            <div class="mt-2" *ngIf="estadoSesion === 'Preparado para grabar'">
+                                <h3 class="text-center text-sm">Preparado para grabar</h3>
+                            </div>
+                        </div>
+                        <!-- Grabando -->
+                        <div class="flex flex-col">
+                            <div [ngClass]="{'bg-green-500 outline outline-offset-2 outline-green-400': estadoSesion === 'Grabando', 'bg-gray-200': estadoSesion !== 'Grabando'}" class="p-2"></div>
+                            <div class="mt-2" *ngIf="estadoSesion === 'Grabando'">
+                                <h3 class="text-center text-sm">Grabando</h3>
+                            </div>
+                        </div>
+                        <!-- Transmisión finalizada -->
+                        <div class="flex flex-col">
+                            <div [ngClass]="{'bg-red-500 outline outline-offset-2 outline-red-400': estadoSesion === 'Transmisión finalizada', 'bg-gray-200': estadoSesion !== 'Transmisión finalizada'}" class="p-2"></div>
+                            <div class="mt-2" *ngIf="estadoSesion === 'Transmisión finalizada'">
+                                <h3 class="text-center text-sm">Transmisión finalizada</h3>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="w-full p-4 m-2" *ngIf="imgbase64 !== ''">
+                        <h2 class="text-lg font-medium">
+                            Obteniendo imagen en: <span class="text-secondary">{{countdown | i18nPlural: countdownMapping }}</span>
+                        </h2>
+                    </div>
+
+                    <div class="w-full mt-4" *ngIf="imgbase64 !== '';else noImage">
+                        <img class="w-full h-auto" [src]="imgbase64" alt="imagen transmision obs">
+                    </div>
+
+                    <ng-template #noImage>
+                        <div class="w-full h-96 flex items-center justify-center">
+                            <h2 class="text-2xl font-medium">No hay imagen disponible</h2>
+                        </div>
+                    </ng-template>
                 </div>
 
                 <!-- contenedor botones -->
                 <div class="w-full md:col-span-1 p-4">
-                    <div class="flex flex-col gap-4 justify-center" *appShowForRoles="['programador', 'monitoreo', 'admin']">
-                        <button mat-flat-button class="text-primary border-solid border border-primary font-bold hover:bg-primary hover:bg-none hover:text-white" (click)="updateEstadoSesionIniciarSesion()" *ngIf="estadoSesion !== 'Grabando' && estadoSesion !== 'Transmisión finalizada'">Iniciar Sesión</button>
-                        <button mat-flat-button class="text-primary border-solid border border-primary font-bold hover:bg-primary hover:bg-none hover:text-white overflow-hidden">Registro de asistentes finalizado</button>
-                        <button *ngIf="estadoSesion === 'Grabando'" mat-flat-button class="text-red-600 border-solid border border-red-600 font-bold hover:bg-red-600 hover:bg-none hover:text-white" (click)="mostrarDialogoConfimar()">Terminar Sesión</button>
+                    <div class="flex flex-col gap-4 justify-center mb-4" *appShowForRoles="['operario', 'monitoreo', 'admin']">
+                        <!-- iniciar transmision -->
+                        <ng-container *appShowForRoles="['monitoreo', 'admin']">
+                            <button mat-flat-button class="text-primary border-solid border border-primary font-bold hover:bg-primary hover:bg-none hover:text-white" (click)="changeFileNameRecord()" *ngIf="estadoSesion === 'No transmitiendo'">Iniciar Transmisión</button>
+                        </ng-container>
+                        <!-- iniciar sesion -->
+                        <button mat-flat-button class="text-primary border-solid border border-primary font-bold hover:bg-primary hover:bg-none hover:text-white" (click)="mostrarDialogoConfimarIniciarSesion()" *ngIf="estadoSesion === 'Preparado para grabar'">Iniciar Sesión</button>
+                        <!-- registro assitentes -->
+                        <button mat-flat-button class="text-primary border-solid border border-primary font-bold hover:bg-primary hover:bg-none hover:text-white overflow-hidden" (click)="finRegistroAsistentes()" *ngIf="estadoSesion === 'Grabando' && !sesion.fin_registro_asistentes">Registro de asistentes <br> finalizado</button>
+                        <!-- terminar sesion -->
+                        <button *ngIf="estadoSesion === 'Grabando' && sesion.fin_registro_asistentes" mat-flat-button class="text-red-600 border-solid border border-red-600 font-bold hover:bg-red-600 hover:bg-none hover:text-white" (click)="mostrarDialogoConfimar()">Terminar Sesión</button>
+                    </div>
+
+                    <div class="w-full" *ngIf="estadoSesion === 'No transmitiendo'">
+                        <h2 class="text-2xl font-medium">La transmision aun no ha iniciado</h2>
+                    </div>
+
+                    <div class="w-full" *ngIf="estadoSesion === 'Preparado para grabar'">
+                        <h2 class="text-2xl font-medium">La transmision esta preparada para grabar</h2>
+                    </div>
+
+                    <div class="w-full" *ngIf="estadoSesion === 'Grabando'">
+                        <h2 class="text-2xl font-medium">La transmision esta en curso</h2>
+                    </div>
+
+                    <div class="w-full" *ngIf="estadoSesion === 'Transmisión finalizada'">
+                        <h2 class="text-2xl font-medium">La transmision ha finalizado</h2>
+                        <h3 class="text-xl font-medium"><span class="text-secondary">Fecha:</span> {{sesion.fecha_fin_efectivo_sesion | date:'longDate'}}</h3>
+                        <h3 class="text-xl font-medium"><span class="text-secondary">Hora:</span> {{sesion.hora_fin_efectivo_sesion | formatTime}}</h3>
                     </div>
                 </div>
             </div>

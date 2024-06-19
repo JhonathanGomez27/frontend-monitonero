@@ -29,7 +29,7 @@
             <!-- informacion comision -->
             <div class="w-full pt-8 px-4">
                 <div class="w-full flex justify-start">
-                    <h2 class="font-bold text-2xl">Comisión Primera Salon Boyaca</h2>
+                    <h2 class="font-bold text-2xl">Comisión Salón Boyaca</h2>
                 </div>
             </div>
         </mat-drawer>
@@ -37,8 +37,60 @@
         <!-- Drawer content -->
         <mat-drawer-content class="flex flex-col bg-white">
             <!-- titulo -->
-            <div class="p-6">
+            <div class="p-6 flex justify-between">
                 <h2 class="font-bold text-4xl text-primary-600">Sesiones</h2>
+                <!-- mat menu -->
+                <div>
+                    <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer"
+                        [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': filtroBusqueda === 0,
+                                    'text-gray-800 bg-gray-200 dark:text-gray-100 dark:bg-gray-500': filtroBusqueda === 2,
+                                    'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': filtroBusqueda === 1}"
+                        [matMenuTriggerFor]="priorityMenu">
+
+                        <!-- Low -->
+                        <ng-container *ngIf="filtroBusqueda === 0">
+                            <mat-icon class="icon-size-4 text-current" [svgIcon]="'heroicons_mini:arrow-long-down'"></mat-icon>
+                            <span class="ml-2 mr-1 text-md font-medium">Pendientes Gestion</span>
+                        </ng-container>
+
+                        <!-- High -->
+                        <!-- <ng-container *ngIf="filtroBusqueda === 1">
+                            <mat-icon class="icon-size-4 text-current" [svgIcon]="'heroicons_mini:arrow-long-up'"></mat-icon>
+                            <span class="ml-2 mr-1 text-md font-medium">Terminadas</span>
+                        </ng-container> -->
+
+                        <!-- Normal -->
+                        <ng-container *ngIf="filtroBusqueda === 2">
+                            <mat-icon class="icon-size-4 text-current" [svgIcon]="'heroicons_solid:minus'"></mat-icon>
+                            <span class="ml-2 mr-1 text-md font-medium">Todas</span>
+                        </ng-container>
+                    </div>
+                    <mat-menu #priorityMenu="matMenu">
+                        <!-- Low -->
+                        <button [ngClass]="{'bg-hover': filtroBusqueda === 0}" mat-menu-item (click)="aplicarFiltro(0)">
+                            <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
+                                <span class="font-medium">Pendientes Gestion</span>
+                                <mat-icon class="mr-0 icon-size-4 text-green-600 dark:text-green-500" [svgIcon]="'heroicons_mini:arrow-long-down'"></mat-icon>
+                            </span>
+                        </button>
+
+                        <!-- High -->
+                        <!-- <button [ngClass]="{'bg-hover': filtroBusqueda === 1}" mat-menu-item (click)="aplicarFiltro(1)">
+                            <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
+                                <span class="font-medium">Terminadas</span>
+                                <mat-icon class="mr-0 icon-size-4 text-red-600 dark:text-red-500" [svgIcon]="'heroicons_mini:arrow-long-up'"></mat-icon>
+                            </span>
+                        </button> -->
+
+                        <!-- Normal -->
+                        <button [ngClass]="{'bg-hover': filtroBusqueda === 2}" mat-menu-item (click)="aplicarFiltro(2)">
+                            <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
+                                <span class="font-medium">Todas</span>
+                                <mat-icon class="mr-0 icon-size-4 text-gray-600 dark:text-gray-500" [svgIcon]="'heroicons_solid:minus'"></mat-icon>
+                            </span>
+                        </button>
+                    </mat-menu>
+                </div>
             </div>
 
             <div class="px-6">
@@ -90,9 +142,11 @@
 
                             <!-- acciones -->
                             <div class="w-full flex flex-row justify-between gap-2 mt-4">
-                                <button mat-icon-button (click)="editarSesionDialog(item)" *appShowForRoles="['programador', 'monitoreo', 'admin']">
-                                    <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
-                                </button>
+                                <div *ngIf="item.estado_transmision === 'No transmitiendo'">
+                                    <button mat-icon-button (click)="editarSesionDialog(item)" *appShowForRoles="['programador', 'monitoreo', 'admin']">
+                                        <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                                    </button>
+                                </div>
                                 <button mat-icon-button [routerLink]="['./', item.id]">
                                     <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:eye'"></mat-icon>
                                 </button>

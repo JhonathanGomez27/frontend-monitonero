@@ -50,6 +50,8 @@ export class SesionesComponent implements OnInit, OnDestroy{
 
     loading: boolean = false;
 
+    filtroBusqueda: any = 0;
+
     constructor(
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _changeDetectorRef: ChangeDetectorRef,
@@ -160,6 +162,33 @@ export class SesionesComponent implements OnInit, OnDestroy{
                 console.log(error);
             }
         );
+    }
+
+    getSesionesSinFiltro(pagina:any): void {
+        this.loading = true;
+
+        this._homeService.getSesionesSinFiltro(pagina).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+            (response:any) => {
+                this.loading = false;
+                this._homeService.sesiones = response;
+                this._changeDetectorRef.markForCheck();
+            },(error) => {
+                console.log(error);
+            }
+        );
+    }
+
+    aplicarFiltro(filtro:any): void {
+        this.filtroBusqueda = filtro;
+
+        if(filtro === 0){
+            this.obtenerSesiones(1);
+        }
+
+        if(filtro === 2){
+            this.getSesionesSinFiltro(1);
+        }
+        // this.obtenerSesiones(1);
     }
 
     //-----------------------------------

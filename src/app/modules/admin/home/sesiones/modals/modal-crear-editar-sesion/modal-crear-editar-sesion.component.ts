@@ -12,6 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMaterialTimepickerModule, NgxMaterialTimepickerTheme } from 'ngx-material-timepicker';
 import Swal from 'sweetalert2';
 import { HomeService } from '../../../home.service';
+import moment from 'moment';
 
 @Component({
   selector: 'app-modal-crear-editar-sesion',
@@ -77,7 +78,14 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
 
         if(data.accion === 'editar') {
             this.sesionEditar = data.data;
-            this.sesionForm.patchValue(data.data)
+            this.sesionForm.patchValue({
+                tema: this.sesionEditar.tema,
+                responsable: this.sesionEditar.responsable,
+                fecha: this.convertirDate(this.sesionEditar.fecha),
+                hora: this.sesionEditar.hora
+            });
+
+            this._changeDetectorRef.markForCheck();
         }
     }
 
@@ -105,22 +113,21 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
         }
 
         const dataForm = this.sesionForm.getRawValue();
-
+        // console.log(dataForm);
         let data = {
             tema : dataForm.tema,
             responsable : dataForm.responsable,
             fecha_inicio_sesion : this.transformDate(dataForm.fecha._d),
             hora_inicio_sesion : dataForm.hora,
-            comision_id: this.data.comision
+            comision_id: 1
         }
 
-        console.log(data);
-
-        return;
+        // return;
 
         if(this.data.accion === 'crear') {
             this.crearSesion(data);
         }else{
+            delete data.comision_id;
             this.editarSesion(data);
         }
         // this.dialogRef.close('guardar');
@@ -176,9 +183,10 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
     }
 
 
-    convertirDate(data: any): Date {
+    convertirDate(data: any): any {
         let dateN = new Date(data.replace(/-/g, '/'));
+        let fechaMoment = moment(dateN);
         // console.log(dateN);
-        return dateN;
+        return fechaMoment;
     }
 }
