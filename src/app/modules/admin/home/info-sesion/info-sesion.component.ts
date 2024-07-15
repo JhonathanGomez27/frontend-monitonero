@@ -26,6 +26,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
 
     loading: boolean = false;
     loadingStatistics: boolean = false;
+    statistics: any = {};
 
     Toast: any;
 
@@ -33,7 +34,8 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
 
     statusFile: string = '';
 
-    countdown: number = 60;
+    countdown: number = 10;
+    interval: any;
     countdownMapping: any = {
         '=1'   : '# segundo.',
         'other': '# segundos.',
@@ -62,10 +64,12 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
         this._homeService.sesion$.pipe(takeUntil(this._unsubscribeAll)).subscribe((sesion) => {
             this.sesion = sesion.data;
             this.estadoSesion = sesion.data.estado_transmision;
+            // this.takeScreenShot();
 
             if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada'){
                 // this.getStatisticsData();
-                this.getStatisticsData();
+                // this.getStatisticsData();
+                this.takeScreenShot();
             }
 
             // this.ejecutarAccion();
@@ -76,35 +80,26 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
         });
 
         let minutos = 1;
-        let milisegundos = minutos * 60 * 1000;
+        let milisegundos = minutos * this.interval * 1000;
 
-        timer(1000, 1000)
-                .pipe(
-                    finalize(() =>
-                    {
-                        this.countdown = 60;
-                    }),
-                    takeWhile(() => this.countdown > 0),
-                    takeUntil(this._unsubscribeAll),
-                    tap(() => this.countdown--),
-                )
-                .subscribe();
+        timer(1000, 1000).pipe(finalize(() => {
+                this.countdown = this.interval;
+            }),
+            takeWhile(() => this.countdown > 0),
+            takeUntil(this._unsubscribeAll),
+            tap(() => this.countdown--)).subscribe();
 
         setInterval(() => {
             if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada'){
                 // this.getStatisticsData();
                 // Redirect after the countdown
-                timer(1000, 1000)
-                .pipe(
-                    finalize(() =>
-                    {
-                        this.countdown = 60;
+                timer(1000, 1000).pipe(finalize(() => {
+                        this.countdown = this.interval;
                     }),
                     takeWhile(() => this.countdown > 0),
                     takeUntil(this._unsubscribeAll),
-                    tap(() => this.countdown--),
-                )
-                .subscribe();
+                    tap(() => this.countdown--)).subscribe();
+
                 this.takeScreenShot();
             }
         }, milisegundos);
@@ -414,6 +409,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
                 if(response.ok === true){
                     // this.updateSesionData();
                     this.imgbase64 = response.base64Image;
+                    this.statistics = response.statistics;
                 }
 
                 this.loadingStatistics = false;

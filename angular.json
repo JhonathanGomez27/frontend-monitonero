@@ -134,5 +134,10 @@
                 }
             }
         }
+    },
+    "cli": {
+      "cache": {
+        "enabled": false
+      }
     }
 }

@@ -39,6 +39,7 @@ export class SesionesComponent implements OnInit, OnDestroy{
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+    comision: any = {};
     sesiones: any[] = [];
     total: number = 0;
 
@@ -102,6 +103,7 @@ export class SesionesComponent implements OnInit, OnDestroy{
         this._homeService.sesiones$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
             this.sesiones = response.data;
             this.total = response.total;
+            this.comision = response.comision;
             this._changeDetectorRef.markForCheck();
         });
     }

@@ -28,8 +28,13 @@
 
             <!-- informacion comision -->
             <div class="w-full pt-8 px-4">
-                <div class="w-full flex justify-start">
-                    <h2 class="font-bold text-2xl">Comisión Salón Boyaca</h2>
+                <div class="w-full flex flex-col justify-start">
+                    <h2 class="font-bold text-2xl">{{comision.nombre}}</h2>
+                </div>
+                <div class="flex justify-start">
+                    <h3 class="mt-4 font-semibold text-xl px-4 py-1 rounded-full" [ngClass]="{'bg-gray-300 text-gray-700': comision.estado === 'No transmitiendo'
+                    , 'bg-green-300 text-green-800': comision.estado === 'grabando'
+                    }">{{comision.estado}}</h3>
                 </div>
             </div>
         </mat-drawer>

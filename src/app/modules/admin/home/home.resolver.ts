@@ -13,7 +13,7 @@ export const getAllSesionesResolver: ResolveFn<any> = (route: ActivatedRouteSnap
 
     if(route.queryParamMap.has('page')){
         page = route.queryParamMap.get('page');
-     }
+    }
 
     return inject(HomeService).getAllSesiones(page);
 }
