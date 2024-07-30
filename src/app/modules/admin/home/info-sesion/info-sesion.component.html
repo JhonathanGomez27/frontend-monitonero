@@ -20,7 +20,7 @@
                         <div [ngClass]="{'bg-gray-400': estadoSesion === 'No transmitiendo'
                                         ,'bg-yellow-500': estadoSesion === 'Preparado para grabar'
                                         , 'bg-green-500': estadoSesion === 'Grabando'
-                                        , 'bg-red-500': estadoSesion === 'Transmisión finalizada'
+                                        , 'bg-blue-500': estadoSesion === 'Transmisión finalizada'
                         }" class="p-6 rounded-full"></div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                         </div>
                         <!-- Transmisión finalizada -->
                         <div class="flex flex-col">
-                            <div [ngClass]="{'bg-red-500 outline outline-offset-2 outline-red-400': estadoSesion === 'Transmisión finalizada', 'bg-gray-200': estadoSesion !== 'Transmisión finalizada'}" class="p-2"></div>
+                            <div [ngClass]="{'bg-blue-500 outline outline-offset-2 outline-blue-400': estadoSesion === 'Transmisión finalizada', 'bg-gray-200': estadoSesion !== 'Transmisión finalizada'}" class="p-2"></div>
                             <div class="mt-2" *ngIf="estadoSesion === 'Transmisión finalizada'">
                                 <h3 class="text-center text-sm">Transmisión finalizada</h3>
                             </div>
@@ -106,9 +106,9 @@
                 <!-- contenedor botones -->
                 <div class="w-full md:col-span-1 p-4">
                     <div class="w-full mb-4">
-                        <h2 class="font-bold text-secondary text-xl">Estado Matizzo</h2>
-                        <h3 class="font-semibold text-lg" *ngIf="estadoSesion === 'No transmitiendo'">No transmitiendo</h3>
-                        <h3 class="font-semibold text-lg" *ngIf="estadoSesion !== 'No transmitiendo'">{{!sesion.estado_matizzo ? 'Transmitiendo': sesion.estado_matizzo}}</h3>
+                        <h2 class="font-bold text-secondary text-2xl">Estado Matizzo</h2>
+                        <h3 class="font-semibold text-2xl" *ngIf="estadoSesion === 'No transmitiendo'">No transmitiendo</h3>
+                        <h3 class="font-semibold text-3xl text-red-600" *ngIf="estadoSesion !== 'No transmitiendo'">{{!estadoMatizzo ? 'Transmitiendo': estadoMatizzo}}</h3>
                     </div>
 
                     <div class="flex flex-col gap-4 justify-center mb-4" *appShowForRoles="['operario', 'monitoreo', 'admin']">

@@ -35,11 +35,16 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
     statusFile: string = '';
 
     countdown: number = 10;
-    interval: any;
+    interval: any = 10;
     countdownMapping: any = {
         '=1'   : '# segundo.',
         'other': '# segundos.',
     };
+
+    estadoMatizzo: string = 'No transmitiendo';
+
+    init: boolean = false;
+    intervalId: any = null;
 
     constructor(
         private _fuseConfirmationService: FuseConfirmationService,
@@ -64,16 +69,20 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
         this._homeService.sesion$.pipe(takeUntil(this._unsubscribeAll)).subscribe((sesion) => {
             this.sesion = sesion.data;
             this.estadoSesion = sesion.data.estado_transmision;
+            this.estadoMatizzo = this.sesion.estado_matizzo;
             // this.takeScreenShot();
 
-            if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada'){
+            if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada' && !this.init){
                 // this.getStatisticsData();
                 // this.getStatisticsData();
+                // this.takeScreenShot();
+                this.init = true;
                 this.takeScreenShot();
             }
 
             // this.ejecutarAccion();
             if(this.estadoSesion === 'Transmisión finalizada'){
+                this.countdown = 0;
                 this.getStatusSesion();
             }
             this._changeDetectorRef.markForCheck();
@@ -89,7 +98,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
             takeUntil(this._unsubscribeAll),
             tap(() => this.countdown--)).subscribe();
 
-        setInterval(() => {
+        this.intervalId =  setInterval(() => {
             if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada'){
                 // this.getStatisticsData();
                 // Redirect after the countdown
@@ -102,10 +111,15 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
 
                 this.takeScreenShot();
             }
+
+            if(!this.init && this.estadoSesion === 'No transmitiendo'){
+                this.updateSesionData();
+            }
         }, milisegundos);
     }
 
     ngOnDestroy(): void {
+        clearInterval(this.intervalId);
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
@@ -157,10 +171,8 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
             }
 
             const valid = this.validarSiPuedeIniciarSesion();
-            console.log(valid);
 
             if(valid){
-                console.log("entro");
                 this.updateEstadoSesionIniciarSesion();
                 return;
             }
@@ -258,6 +270,9 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
         this._homeService.iniciarSesion(this.sesion.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
             (response:any) => {
                 this.updateSesionData();
+                // if(response.ok === true){
+                //     this.startRecording();
+                // }
             },(error) => {
                 console.log(error);
             }
@@ -358,7 +373,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
                 // console.log(response);
                 if(!showModal){
                     this.loadingStatistics = false;
-                    this.takeScreenShot();
+                    // this.takeScreenShot();
                 }else{
                     this.loadingStatistics = false;
                     this.mostrarDialogoEstadisticas(response);
@@ -388,6 +403,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
                 if(response.ok === true){
                     this.startRecording();
                 }
+
             },(error) => {
                 this.Toast.fire({
                     icon: 'error',
@@ -404,12 +420,13 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
 
         this.loadingStatistics = true
 
-        this._homeService.takeScreenShot().pipe(takeUntil(this._unsubscribeAll)).subscribe(
+        this._homeService.takeScreenShot(this.sesion.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
             (response:any) => {
                 if(response.ok === true){
                     // this.updateSesionData();
                     this.imgbase64 = response.base64Image;
                     this.statistics = response.statistics;
+                    this._homeService.sesion = {data : response.sesion};
                 }
 
                 this.loadingStatistics = false;
@@ -428,7 +445,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
     getStatusSesion(){
         const nombre = this.setNombreArchivo();
 
-        this._homeService.getStatusSesion({nombre_archivo: nombre}).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+        this._homeService.getStatusSesion({sesion: this.sesion.id}).pipe(takeUntil(this._unsubscribeAll)).subscribe(
             (response:any) => {
                 if(response.ok === true){
                     const status = response.status.estado;

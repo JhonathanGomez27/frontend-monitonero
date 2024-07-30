@@ -65,8 +65,6 @@ export class SesionesComponent implements OnInit, OnDestroy{
     }
 
     ngOnInit(): void {
-        this.titleService.setTitle('Portal de Monitoreo | Comisión Primera de Boyaca');
-
         this.activatedRoute.queryParams.subscribe(params => {
             if(!params.page){
                 this.router.navigate([],{relativeTo: this.activatedRoute,queryParams: { page: '1' }});
@@ -104,6 +102,8 @@ export class SesionesComponent implements OnInit, OnDestroy{
             this.sesiones = response.data;
             this.total = response.total;
             this.comision = response.comision;
+            this.titleService.setTitle(`Portal de Monitoreo | ${this.comision.nombre}`);
+
             this._changeDetectorRef.markForCheck();
         });
     }

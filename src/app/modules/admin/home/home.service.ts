@@ -140,8 +140,8 @@ export class HomeService {
         return this._httpCliente.get(`${this.url}obs/change-record-name/${id}`);
     }
 
-    takeScreenShot(): Observable<any> {
-        return this._httpCliente.get(`${this.url}obs/take-screenshot`);
+    takeScreenShot(sesion:any): Observable<any> {
+        return this._httpCliente.get(`${this.url}obs/take-screenshot/${sesion}`);
     }
 
     getStatusSesion(data:any): Observable<any> {
