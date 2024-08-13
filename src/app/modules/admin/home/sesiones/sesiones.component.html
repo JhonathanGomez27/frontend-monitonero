@@ -33,8 +33,8 @@
                 </div>
                 <div class="flex justify-start">
                     <h3 class="mt-4 font-semibold text-xl px-4 py-1 rounded-full" [ngClass]="{'bg-gray-300 text-gray-700': comision.estado === 'No transmitiendo'
-                    , 'bg-green-300 text-green-800': comision.estado === 'grabando'
-                    }">{{comision.estado}}</h3>
+                    , 'bg-green-300 text-green-800': comision.estado === 'grabando', 'bg-yellow-300 text-yellow-800': comision.estado === 'preparado'
+                    }">{{comision.estado | titlecase}}</h3>
                 </div>
             </div>
         </mat-drawer>

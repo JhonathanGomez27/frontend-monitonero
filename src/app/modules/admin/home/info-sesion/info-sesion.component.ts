@@ -83,6 +83,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
             // this.ejecutarAccion();
             if(this.estadoSesion === 'Transmisión finalizada'){
                 this.countdown = 0;
+                this.imgbase64 = '';
                 this.getStatusSesion();
             }
             this._changeDetectorRef.markForCheck();
@@ -93,10 +94,10 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
 
         timer(1000, 1000).pipe(finalize(() => {
                 this.countdown = this.interval;
-            }),
-            takeWhile(() => this.countdown > 0),
-            takeUntil(this._unsubscribeAll),
-            tap(() => this.countdown--)).subscribe();
+        }),
+        takeWhile(() => this.countdown > 0),
+        takeUntil(this._unsubscribeAll),
+        tap(() => this.countdown--)).subscribe();
 
         this.intervalId =  setInterval(() => {
             if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada'){
@@ -326,7 +327,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
             },(error) => {
                 this.loading = false;
                 this._changeDetectorRef.markForCheck();
-                const message = (error.error.error).replace(/"2"/g, '');
+                const message = (error.error.message).replace(/"2"/g, '');
                 this.Toast.fire({
                     icon: 'error',
                     title: message
@@ -376,7 +377,7 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
                     // this.takeScreenShot();
                 }else{
                     this.loadingStatistics = false;
-                    this.mostrarDialogoEstadisticas(response);
+                    this.mostrarDialogoEstadisticas(response.statistics);
                 }
 
                 this.loadingStatistics = false
@@ -443,23 +444,23 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
     }
 
     getStatusSesion(){
-        const nombre = this.setNombreArchivo();
+        // const nombre = this.setNombreArchivo();
 
         this._homeService.getStatusSesion({sesion: this.sesion.id}).pipe(takeUntil(this._unsubscribeAll)).subscribe(
             (response:any) => {
                 if(response.ok === true){
                     const status = response.status.estado;
 
-                    if(status === 'archivo_creado'){
-                        this.statusFile = 'Archivo creado en espera de ser procesado';
-                    }
-
-                    if(status === 'procesando'){
-                        this.statusFile = 'Archivo en proceso de ser procesado';
+                    if(status === 'iniciado'){
+                        this.statusFile = 'Archivo creado en espera de ser procesado.';
                     }
 
                     if(status === 'finalizado'){
-                        this.statusFile = 'Archivo procesado';
+                        this.statusFile = 'El archivo está siendo procesado.';
+                    }
+
+                    if(status === 'transcrito'){
+                        this.statusFile = 'Archivo procesado.';
                     }
                 }
 

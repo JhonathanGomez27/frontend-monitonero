@@ -1,0 +1,16 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto bg-white" cdkScrollable>
+
+    <!-- Main -->
+    <div class="flex-auto p-6 md:px-26 lg:px-60 sm:py-10">
+
+        <!-- CONTENT GOES HERE -->
+        <div class="min-h-100">
+
+            <div *ngIf="noiseDetected" class="alert alert-warning">
+                ⚠️ Noise detected in the audio stream!
+              </div>
+              <canvas #canvas></canvas>
+        </div>
+
+    </div>
+</div>

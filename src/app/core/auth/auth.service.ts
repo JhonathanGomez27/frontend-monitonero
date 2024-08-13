@@ -24,27 +24,28 @@ export class AuthService
      */
     set accessToken(token: string)
     {
-        localStorage.setItem('accessToken', token);
+        localStorage.setItem('accessTokenMonitoreo', token);
     }
 
     get accessToken(): string
     {
-        const token = localStorage.getItem('accessToken') ?? '';
+        const token = localStorage.getItem('accessTokenMonitoreo') ?? '';
+
         if(token === 'undefined'){
             this.signOut();
             location.reload();
         }
-        return localStorage.getItem('accessToken') ?? '';
+        return localStorage.getItem('accessTokenMonitoreo') ?? '';
     }
 
     set refreshToken(token: string)
     {
-        localStorage.setItem('refreshToken', token);
+        localStorage.setItem('refreshTokenMonitoreo', token);
     }
 
     get refreshToken(): string
     {
-        return localStorage.getItem('refreshToken') ?? '';
+        return localStorage.getItem('refreshTokenMonitoreo') ?? '';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -142,8 +143,8 @@ export class AuthService
         this._userService.user = null;
 
         // Remove the access token from the local storage
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('accessTokenMonitoreo');
+        localStorage.removeItem('refreshTokenMonitoreo')
         // Set the authenticated flag to false
         this._authenticated = false
         // Return the observable
