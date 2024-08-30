@@ -72,7 +72,7 @@ export const appRoutes: Route[] = [
         canActivateChild: [AuthGuard],
         component: LayoutComponent,
         resolve: {
-            initialData: initialDataResolver
+            initialData: initialDataResolver,
         },
         children: [
             {

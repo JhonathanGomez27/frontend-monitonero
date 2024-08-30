@@ -39,6 +39,7 @@ export class AuthSignInComponent implements OnInit
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
+        // private _configService: ConfigService
     )
     {
     }
@@ -52,6 +53,8 @@ export class AuthSignInComponent implements OnInit
      */
     ngOnInit(): void
     {
+
+        // console.log(this._configService.apiUrl);
         // Create the form
         this.signInForm = this._formBuilder.group({
             email     : ['', [Validators.required, Validators.email]],
@@ -106,7 +109,7 @@ export class AuthSignInComponent implements OnInit
                     // Set the alert
                     this.alert = {
                         type   : 'error',
-                        message: 'Correo electronico o contraseña incorrectas. Por favor, inténtelo de nuevo.',
+                        message: response.error.mensaje || 'Correo electronico o contraseña incorrectas. Por favor, inténtelo de nuevo.',
                     };
 
                     // Show the alert
