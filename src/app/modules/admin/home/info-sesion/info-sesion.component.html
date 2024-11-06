@@ -112,9 +112,9 @@
                         <h3 class="font-semibold text-3xl text-red-600" *ngIf="estadoSesion !== 'No transmitiendo'">{{!estadoMatizzo ? 'Transmitiendo': estadoMatizzo}}</h3>
                     </div>
 
-                    <div class="flex flex-col gap-4 justify-center mb-4" *appShowForRoles="['operario', 'monitoreo', 'admin']">
+                    <div class="flex flex-col gap-4 justify-center mb-4" *appShowForRoles="['operario', 'monitor', 'admin']">
                         <!-- iniciar transmision -->
-                        <ng-container *appShowForRoles="['monitoreo', 'admin']">
+                        <ng-container *appShowForRoles="['monitor', 'admin']">
                             <button mat-flat-button class="text-primary border-solid border border-primary font-bold hover:bg-primary hover:bg-none hover:text-white" (click)="changeFileNameRecord()" *ngIf="estadoSesion === 'No transmitiendo'">Iniciar Transmisión</button>
                         </ng-container>
                         <!-- iniciar sesion -->

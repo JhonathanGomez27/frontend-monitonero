@@ -182,6 +182,8 @@ export class SesionesComponent implements OnInit, OnDestroy{
 
     aplicarFiltro(filtro:any): void {
         this.filtroBusqueda = filtro;
+        this.page = 0;
+        this.router.navigate([],{relativeTo: this.activatedRoute,queryParams: { page: 1 }});
 
         if(filtro === 0){
             this.obtenerSesiones(1);
@@ -200,6 +202,14 @@ export class SesionesComponent implements OnInit, OnDestroy{
         let pagina = event.pageIndex + 1;
         this.router.navigate([],{relativeTo: this.activatedRoute,queryParams: { page: pagina }});
 
-        this.obtenerSesiones(pagina);
+        if(this.filtroBusqueda === 0){
+            this.obtenerSesiones(pagina);
+        }
+
+        if(this.filtroBusqueda === 2){
+            this.getSesionesSinFiltro(pagina);
+        }
+
+        // this.obtenerSesiones(pagina);
     }
 }
