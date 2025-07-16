@@ -1,170 +1,293 @@
-<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden bg-gradient-to-br from-slate-50 via-primary-50 to-slate-100">
 
-    <div class="p-6 bg-white w-full flex justify-between">
+    <!-- Header superior -->
+    <div class="p-6 bg-white shadow-sm border-b border-gray-100 w-full flex justify-between items-center">
         <div class="flex flex-row gap-3 items-center">
-            <a class="cursor-pointer p-2 flex items-center rounded-none bg-gray-100 " mat-flat-button [routerLink]="['../']">
-                <mat-icon class="text-current icon-size-4 mr-2" [svgIcon]="'mat_outline:arrow_back_ios'"></mat-icon>
+            <a class="cursor-pointer px-4 py-2 flex items-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors duration-200 font-medium" mat-flat-button [routerLink]="['../']">
+                <mat-icon class="text-current w-4 h-4 mr-2" [svgIcon]="'mat_outline:arrow_back_ios'"></mat-icon>
                 Volver
             </a>
-            <!-- <h2 class="sm:text-4xl font-semibold text-primary-700 text-2xl">Busqueda</h2> -->
         </div>
         <div class="flex items-center md:hidden">
-            <button mat-icon-button (click)="matDrawer.toggle()">
+            <button mat-icon-button class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200" (click)="matDrawer.toggle()">
                 <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
             </button>
         </div>
     </div>
 
     <mat-drawer-container class="flex-auto h-full">
-        <!-- Drawer -->
-        <mat-drawer class="w-80 dark:bg-gray-900" [autoFocus]="false" [mode]="drawerMode" [opened]="drawerOpened" #matDrawer>
-            <!-- Boton crear sesion -->
-            <div class="w-full flex justify-center" *appShowForRoles="['programador', 'monitoreo', 'admin']">
-                <button mat-flat-button (click)="crearSesionDialog()" class="text-primary border-solid border font-bold hover:bg-primary hover:bg-none hover:text-white">
-                    <mat-icon class="text-current icon-size-6 mr-2" [svgIcon]="'heroicons_outline:plus-small'"></mat-icon>
-                    Crear sesion
-                </button>
+        <!-- Drawer mejorado -->
+        <mat-drawer class="w-80 bg-white shadow-xl" [autoFocus]="false" [mode]="drawerMode" [opened]="drawerOpened" #matDrawer>
+            <!-- Header del drawer -->
+            <div class="p-6 bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-xl mb-1">{{comision.nombre}}</h2>
+                        <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                             [ngClass]="{
+                                'bg-white/20 text-white': comision.estado === 'No transmitiendo',
+                                'bg-green-400 text-green-900': comision.estado === 'grabando',
+                                'bg-yellow-400 text-yellow-900': comision.estado === 'preparado'
+                             }">
+                            <div class="w-2 h-2 rounded-full mr-2"
+                                 [ngClass]="{
+                                    'bg-gray-300': comision.estado === 'No transmitiendo',
+                                    'bg-green-600 animate-pulse': comision.estado === 'grabando',
+                                    'bg-yellow-600': comision.estado === 'preparado'
+                                 }">
+                            </div>
+                            {{comision.estado | titlecase}}
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- informacion comision -->
-            <div class="w-full pt-8 px-4">
-                <div class="w-full flex flex-col justify-start">
-                    <h2 class="font-bold text-2xl">{{comision.nombre}}</h2>
-                </div>
-                <div class="flex justify-start">
-                    <h3 class="mt-4 font-semibold text-xl px-4 py-1 rounded-full" [ngClass]="{'bg-gray-300 text-gray-700': comision.estado === 'No transmitiendo'
-                    , 'bg-green-300 text-green-800': comision.estado === 'grabando', 'bg-yellow-300 text-yellow-800': comision.estado === 'preparado'
-                    }">{{comision.estado | titlecase}}</h3>
-                </div>
+            <!-- Botón crear sesión mejorado -->
+            <div class="p-6" *appShowForRoles="['programador', 'monitoreo', 'admin']">
+                <button mat-flat-button
+                        (click)="crearSesionDialog()"
+                        class="w-full py-3 px-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                    <mat-icon class="text-current w-5 h-5 mr-2" [svgIcon]="'heroicons_outline:plus-small'"></mat-icon>
+                    Crear Nueva Sesión
+                </button>
             </div>
         </mat-drawer>
 
         <!-- Drawer content -->
-        <mat-drawer-content class="flex flex-col bg-white">
-            <!-- titulo -->
-            <div class="p-6 flex justify-between">
-                <h2 class="font-bold text-4xl text-primary-600">Sesiones</h2>
-                <!-- mat menu -->
-                <div>
-                    <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer"
-                        [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': filtroBusqueda === 0,
-                                    'text-gray-800 bg-gray-200 dark:text-gray-100 dark:bg-gray-500': filtroBusqueda === 2,
-                                    'text-blue-800 bg-blue-200 dark:text-blue-100 dark:bg-blue-500': filtroBusqueda === 1}"
-                        [matMenuTriggerFor]="priorityMenu">
-
-                        <!-- Low -->
-                        <ng-container *ngIf="filtroBusqueda === 0">
-                            <mat-icon class="icon-size-4 text-current" [svgIcon]="'heroicons_mini:arrow-long-down'"></mat-icon>
-                            <span class="ml-2 mr-1 text-md font-medium">Pendientes Gestion</span>
-                        </ng-container>
-
-                        <!-- High -->
-                        <!-- <ng-container *ngIf="filtroBusqueda === 1">
-                            <mat-icon class="icon-size-4 text-current" [svgIcon]="'heroicons_mini:arrow-long-up'"></mat-icon>
-                            <span class="ml-2 mr-1 text-md font-medium">Terminadas</span>
-                        </ng-container> -->
-
-                        <!-- Normal -->
-                        <ng-container *ngIf="filtroBusqueda === 2">
-                            <mat-icon class="icon-size-4 text-current" [svgIcon]="'heroicons_solid:minus'"></mat-icon>
-                            <span class="ml-2 mr-1 text-md font-medium">Todas</span>
-                        </ng-container>
+        <mat-drawer-content class="flex flex-col">
+            <!-- Header del contenido principal -->
+            <div class="p-6 bg-white border-b border-gray-100">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                    <div class="flex items-center mb-4 sm:mb-0">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl shadow-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-primary-900 mb-1">Sesiones</h1>
+                            <p class="text-gray-600">Gestiona las sesiones de la comisión</p>
+                        </div>
                     </div>
-                    <mat-menu #priorityMenu="matMenu">
-                        <!-- Low -->
-                        <button [ngClass]="{'bg-hover': filtroBusqueda === 0}" mat-menu-item (click)="aplicarFiltro(0)">
-                            <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
-                                <span class="font-medium">Pendientes Gestion</span>
-                                <mat-icon class="mr-0 icon-size-4 text-green-600 dark:text-green-500" [svgIcon]="'heroicons_mini:arrow-long-down'"></mat-icon>
-                            </span>
-                        </button>
 
-                        <!-- High -->
-                        <!-- <button [ngClass]="{'bg-hover': filtroBusqueda === 1}" mat-menu-item (click)="aplicarFiltro(1)">
-                            <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
-                                <span class="font-medium">Terminadas</span>
-                                <mat-icon class="mr-0 icon-size-4 text-blue-600 dark:text-blue-500" [svgIcon]="'heroicons_mini:arrow-long-up'"></mat-icon>
-                            </span>
-                        </button> -->
+                    <!-- Filtros mejorados -->
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <button class="flex items-center px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm border"
+                                    [ngClass]="{
+                                        'bg-green-100 text-green-800 border-green-200': filtroBusqueda === 0,
+                                        'bg-gray-100 text-gray-800 border-gray-200': filtroBusqueda === 2,
+                                        'bg-primary-100 text-primary-800 border-primary-200': filtroBusqueda === 1
+                                    }"
+                                    [matMenuTriggerFor]="priorityMenu">
 
-                        <!-- Normal -->
-                        <button [ngClass]="{'bg-hover': filtroBusqueda === 2}" mat-menu-item (click)="aplicarFiltro(2)">
-                            <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
-                                <span class="font-medium">Todas</span>
-                                <mat-icon class="mr-0 icon-size-4 text-gray-600 dark:text-gray-500" [svgIcon]="'heroicons_solid:minus'"></mat-icon>
-                            </span>
-                        </button>
-                    </mat-menu>
+                                <!-- Pendientes -->
+                                <ng-container *ngIf="filtroBusqueda === 0">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                    </svg>
+                                    Pendientes Gestión
+                                </ng-container>
+
+                                <!-- Todas -->
+                                <ng-container *ngIf="filtroBusqueda === 2">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                    </svg>
+                                    Todas
+                                </ng-container>
+
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <mat-menu #priorityMenu="matMenu" class="mt-2">
+                                <button mat-menu-item
+                                        (click)="aplicarFiltro(0)"
+                                        class="flex items-center justify-between w-full px-4 py-3 hover:bg-green-50">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                        </svg>
+                                        Pendientes Gestión
+                                    </span>
+                                    <div *ngIf="filtroBusqueda === 0" class="w-2 h-2 bg-green-600 rounded-full"></div>
+                                </button>
+
+                                <button mat-menu-item
+                                        (click)="aplicarFiltro(2)"
+                                        class="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-50">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                        </svg>
+                                        Todas
+                                    </span>
+                                    <div *ngIf="filtroBusqueda === 2" class="w-2 h-2 bg-gray-600 rounded-full"></div>
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="px-6">
-
-                <!-- fecha -->
-                <div class="w-full justify-start py-4">
-                    <!-- <h3 class="text-secondary text-lg">01 de Junio de 2024</h3> -->
-                </div>
-                <!-- sesions list -->
-                <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <!-- Contenido principal -->
+            <div class="flex-1 px-6 py-4 overflow-y-auto">
+                <!-- Grid de sesiones mejorado -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     <ng-container *ngFor="let item of sesiones; let i = index; let first = first; let last = last">
-                        <!-- start of the day -->
-                        <!-- <ng-container *ngIf="first || (sesiones[i-1].fecha_inicio_sesion | date: 'd') !== (item.fecha_inicio_sesion | date: 'd')">
-                            <div class="w-full justify-start py-4">
-                                <h3 class="text-secondary text-lg">{{item.fecha_inicio_sesion | date:'longDate'}}</h3>
-                            </div>
-                        </ng-container> -->
+                        <!-- Tarjeta de sesión mejorada -->
+                        <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl border border-gray-100 overflow-hidden cursor-pointer transform transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]">
 
-                        <!-- card -->
-                        <div class="w-full p-4 border border-solid border-gray-200 rounded-md hover:shadow-inner">
-                            <!-- titulo -->
-                            <div class="flex flex-col justify-start">
-                                <div class="flex flex-row justify-between items-center gap-2">
-                                    <h2 class="text-xl font-semibold">
-                                        {{item.tema}}
-                                    </h2>
-                                    <div class="flex justify-center">
-                                        <div  [ngClass]="{'bg-gray-400': item.estado_transmision === 'No transmitiendo'
-                                        ,'bg-yellow-500': item.estado_transmision === 'Preparado para grabar'
-                                        , 'bg-green-500': item.estado_transmision === 'Grabando'
-                                        , 'bg-blue-500': item.estado_transmision === 'Transmisión finalizada'
-                                        , 'bg-red-500': item.estado_transmision === 'Sesíon cancelada'
-                                        }"
-                                        class="p-4 rounded-full"></div>
+                            <!-- Indicador de estado superior -->
+                            <div class="absolute top-0 left-0 right-0 h-1 transition-all duration-300"
+                                 [ngClass]="{
+                                    'bg-gray-400': item.estado_transmision === 'No transmitiendo',
+                                    'bg-gradient-to-r from-yellow-400 to-yellow-600': item.estado_transmision === 'Preparado para grabar',
+                                    'bg-gradient-to-r from-green-400 to-green-600': item.estado_transmision === 'Grabando',
+                                    'bg-gradient-to-r from-primary-400 to-primary-600': item.estado_transmision === 'Transmisión finalizada',
+                                    'bg-gradient-to-r from-red-400 to-red-600': item.estado_transmision === 'Sesíon cancelada'
+                                 }">
+                            </div>
+
+                            <div class="p-6">
+                                <!-- Header de la tarjeta -->
+                                <div class="flex items-start justify-between mb-4">
+                                    <!-- Icono de sesión -->
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Indicador de estado -->
+                                    <div class="flex items-center space-x-2">
+                                        <div class="relative">
+                                            <div [ngClass]="{
+                                                    'bg-gray-400': item.estado_transmision === 'No transmitiendo',
+                                                    'bg-yellow-500': item.estado_transmision === 'Preparado para grabar',
+                                                    'bg-green-500 animate-pulse': item.estado_transmision === 'Grabando',
+                                                    'bg-primary-500': item.estado_transmision === 'Transmisión finalizada',
+                                                    'bg-red-500': item.estado_transmision === 'Sesíon cancelada'
+                                                 }"
+                                                 class="w-3 h-3 rounded-full transition-all duration-300">
+                                            </div>
+                                            <!-- Anillo de pulso para estado grabando -->
+                                            <div *ngIf="item.estado_transmision === 'Grabando'"
+                                                 class="absolute inset-0 w-3 h-3 bg-green-500 rounded-full animate-ping opacity-75">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <h3 class="flex justify-start">
-                                    {{item.fecha_inicio_sesion | date:'longDate'}} - {{item.hora_inicio_sesion}}
-                                </h3>
+
+                                <!-- Título y tema -->
+                                <div class="mb-4">
+                                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-primary-900 transition-colors duration-300 line-clamp-2 mb-2">
+                                        {{item.tema}}
+                                    </h3>
+
+                                    <!-- Fecha y hora -->
+                                    <div class="flex items-center text-gray-600 text-sm mb-3">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>{{item.fecha_inicio_sesion | date:'shortDate'}} - {{item.hora_inicio_sesion}}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Información del responsable -->
+                                <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-500 uppercase tracking-wider">Responsable</p>
+                                            <p class="text-sm font-medium text-gray-900">{{item.responsable}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Badge de estado -->
+                                <div class="mb-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                                          [ngClass]="{
+                                            'bg-gray-100 text-gray-800': item.estado_transmision === 'No transmitiendo',
+                                            'bg-yellow-100 text-yellow-800': item.estado_transmision === 'Preparado para grabar',
+                                            'bg-green-100 text-green-800': item.estado_transmision === 'Grabando',
+                                            'bg-primary-100 text-primary-800': item.estado_transmision === 'Transmisión finalizada',
+                                            'bg-red-100 text-red-800': item.estado_transmision === 'Sesíon cancelada'
+                                          }">
+                                        {{item.estado_transmision}}
+                                    </span>
+                                </div>
+
+                                <!-- Acciones -->
+                                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                    <div class="flex items-center space-x-2">
+                                        <!-- Botón editar (solo si no está transmitiendo) -->
+                                        <ng-container *ngIf="item.estado_transmision === 'No transmitiendo'">
+                                            <button mat-icon-button matTooltip="Editar sesión"
+                                                    (click)="editarSesionDialog(item)"
+                                                    *appShowForRoles="['programador', 'monitoreo', 'admin']"
+                                                    class="w-10 h-10 rounded-lg bg-primary-100 hover:bg-primary-200 text-primary-600 transition-colors duration-200">
+                                                <mat-icon class="w-5 h-5" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                                            </button>
+                                        </ng-container>
+
+                                        <!-- Botón ver detalles -->
+                                        <button mat-icon-button matTooltip="Ver detalles"
+                                                [routerLink]="['./', item.id]"
+                                                class="w-10 h-10 rounded-lg bg-green-100 hover:bg-green-200 text-green-600 transition-colors duration-200">
+                                            <mat-icon class="w-5 h-5" [svgIcon]="'heroicons_outline:eye'"></mat-icon>
+                                        </button>
+                                    </div>
+
+                                    <!-- Flecha de navegación -->
+                                    <!-- <div class="flex items-center text-primary-600 group-hover:text-primary-800 transition-colors duration-300">
+                                        <span class="text-xs font-medium mr-1">Ver más</span>
+                                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </div> -->
+                                </div>
                             </div>
 
-                            <!-- informcion -->
-                             <div class="flex flex-col mt-4">
-                                <!-- responsable -->
-                                <div class="w-full flex flex-col">
-                                    <h3 class="text-secondary text-lg">Responsable:</h3>
-                                    <h4 class="text-lg font-medium">{{item.responsable}}</h4>
-                                </div>
-                             </div>
-
-                            <!-- acciones -->
-                            <div class="w-full flex flex-row justify-between gap-2 mt-4">
-                                <div *ngIf="item.estado_transmision === 'No transmitiendo'">
-                                    <button mat-icon-button (click)="editarSesionDialog(item)" *appShowForRoles="['programador', 'monitoreo', 'admin']">
-                                        <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
-                                    </button>
-                                </div>
-                                <button mat-icon-button [routerLink]="['./', item.id]">
-                                    <mat-icon class="text-primary icon-size-8" [svgIcon]="'heroicons_outline:eye'"></mat-icon>
-                                </button>
-                            </div>
+                            <!-- Overlay de hover -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-primary-600/5 to-primary-800/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         </div>
-
                     </ng-container>
                 </div>
 
-                <!-- content -->
-                <div class="w-full mt-3 flex justify-end">
-                    <mat-paginator [disabled]="loading" class="bg-transparent" [length]="total" [pageIndex]="page" [pageSize]="limit" [showFirstLastButtons]="true" (page)="handlePageEnvent($event)"></mat-paginator>
+                <!-- Mensaje cuando no hay sesiones -->
+                <div *ngIf="sesiones.length === 0" class="flex items-center justify-center h-64 text-gray-500">
+                    <div class="text-center">
+                        <mat-icon class="text-6xl mb-4" [svgIcon]="'heroicons_outline:exclamation-circle'"></mat-icon>
+                        <p class="text-lg font-semibold">No hay sesiones disponibles</p>
+                    </div>
+                </div>
+
+                <!-- Paginación mejorada -->
+                <div class="mt-8 flex justify-center">
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                        <mat-paginator
+                            [disabled]="loading"
+                            class="bg-transparent"
+                            [length]="total"
+                            [pageIndex]="page"
+                            [pageSize]="limit"
+                            [showFirstLastButtons]="true"
+                            (page)="handlePageEnvent($event)">
+                        </mat-paginator>
+                    </div>
                 </div>
             </div>
         </mat-drawer-content>

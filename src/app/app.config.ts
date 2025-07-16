@@ -15,6 +15,8 @@ import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { CustomMatPaginatorIntl } from 'shared/utils/customPaginatorConfiguration';
 
 registerLocaleData(localeEs, 'es');
 
@@ -127,6 +129,10 @@ export const appConfig: ApplicationConfig = {
                 ],
             },
         }),
+        {
+            provide: MatPaginatorIntl,
+            useClass: CustomMatPaginatorIntl
+        },
         {provide: LOCALE_ID, useValue: 'es'}
     ],
 };

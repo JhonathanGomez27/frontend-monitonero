@@ -269,7 +269,7 @@ const config = {
                 }
             }),
             backgroundImage: {
-                'capitolio': "url('https://www.revistacredencial.com/sites/default/files/corradine_angulo.jpg')",
+                'capitolio': "url('assets/images/logo/capitolio.jpg')",
                 'puntos': "linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.5) 100%), radial-gradient(circle, rgba(0, 0, 0, 0.1) 10%, rgba(0, 0, 0, 0) 30%)"
             }
         }

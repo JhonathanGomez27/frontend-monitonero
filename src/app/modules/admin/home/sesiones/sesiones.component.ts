@@ -24,11 +24,12 @@ import { ModalCrearEditarSesionComponent } from './modals/modal-crear-editar-ses
 import { ShowForRolesDirective } from 'app/core/directives/show-for-roles.directive';
 import { HomeService } from '../home.service';
 import { environment } from 'environments/environment';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-sesiones',
   standalone: true,
-  imports: [CommonModule, MatSidenavModule, MatRippleModule, NgClass, MatIconModule, NgIf, NgFor, MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatRadioModule, FormsModule, MatDatepickerModule, MatSelectModule, TitleCasePipe, MatMenuModule, MatPaginatorModule, RouterOutlet, RouterLink, ReactiveFormsModule, MatProgressSpinnerModule, ShowForRolesDirective],
+  imports: [CommonModule, MatSidenavModule, MatRippleModule, NgClass, MatIconModule, NgIf, NgFor, MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatRadioModule, FormsModule, MatDatepickerModule, MatSelectModule, TitleCasePipe, MatMenuModule, MatPaginatorModule, RouterLink, ReactiveFormsModule, MatProgressSpinnerModule, ShowForRolesDirective, MatTooltipModule],
   templateUrl: './sesiones.component.html',
 })
 export class SesionesComponent implements OnInit, OnDestroy{

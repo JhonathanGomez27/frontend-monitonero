@@ -1,48 +1,63 @@
-<div class="flex flex-col flex-auto items-center justify-center min-w-0 md:p-8 bg-white">
-    <div class="flex md:w-full md:max-w-6xl sm:rounded-2xl sm:shadow overflow-hidden sm:bg-card">
+<div class="flex flex-col flex-auto items-center justify-center min-w-0 md:p-8 bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="flex md:w-full md:max-w-6xl sm:rounded-2xl sm:shadow-xl overflow-hidden sm:bg-card">
 
-        <div class="w-full sm:w-auto py-8 px-4 sm:p-12 md:p-16">
+        <!-- Panel derecho (formulario) con mejoras -->
+        <div class="w-full sm:w-auto py-8 px-4 sm:p-12 md:p-16 bg-white">
             <div class="w-full max-w-80 sm:max-w-100 sm:w-100 mx-auto sm:mx-0">
-                <!-- Logo -->
+                <!-- Logo con animación sutil -->
                 <div class="w-full flex justify-center">
-                    <img class="w-4/5" alt="logo camara de representantes" src="https://metodosderesoluciondeconflictos.wordpress.com/wp-content/uploads/2017/05/camara-de-representantes.png">
+                    <img class="w-3/5 hover:scale-105 transition-transform duration-300" alt="Logo Senado de la República" src="assets/images/logo/logo_senado.png">
                 </div>
 
-                <!-- Title -->
-                <div class="mt-20 text-4xl font-extrabold tracking-tight leading-tight text-primary text-center">Portal de Monitoreo</div>
-                <!-- <div class="mt-2 text-lg font-medium text-gray-600 text-center">Inicia sesión</div> -->
+                <!-- Title con mejor espaciado y tipografía -->
+                <div class="mt-12 text-4xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-primary-700 to-primary-500 bg-clip-text text-transparent text-center">Portal de Monitoreo</div>
+                <div class="mt-2 text-lg font-medium text-gray-600 text-center">Acceso al sistema</div>
 
-                <!-- Alert -->
+                <!-- Alert mejorado -->
                 <fuse-alert
                     class="mt-8"
                     *ngIf="showAlert"
                     [appearance]="'outline'"
-                    [showIcon]="false"
+                    [showIcon]="true"
                     [type]="alert.type"
                     [@shake]="alert.type === 'error'">
                     {{alert.message}}
                 </fuse-alert>
 
-                <!-- Sign in form -->
+                <!-- Sign in form con mejores transiciones -->
                 <form
-                    class="mt-8"
+                    class="mt-8 animate-fadeIn"
                     [formGroup]="signInForm"
                     #signInNgForm="ngForm">
 
                     <!-- Email field -->
-                    <mat-form-field class="w-full">
+                    <mat-form-field class="w-full" appearance="outline">
                         <mat-label>Usuario</mat-label>
-                        <input id="email" matInput [formControlName]="'email'" type="text">
+                        <mat-icon class="icon-size-5 text-gray-400" matPrefix [svgIcon]="'heroicons_solid:user'" class="mr-2"></mat-icon>
+                        <input id="email" matInput [formControlName]="'email'" type="text" autocomplete="username">
                         <mat-error *ngIf="signInForm.get('email').hasError('required')">
                             El usuario es requerido
                         </mat-error>
                     </mat-form-field>
 
                     <!-- Password field -->
-                    <mat-form-field class="w-full">
+                    <mat-form-field class="w-full" appearance="outline">
                         <mat-label>Contraseña</mat-label>
-                        <input id="password" matInput type="password" [formControlName]="'password'" #passwordField>
-                        <button mat-icon-button type="button" (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'" matSuffix>
+                        <mat-icon class="icon-size-5 text-gray-400" matPrefix [svgIcon]="'heroicons_solid:lock-closed'" class="mr-2"></mat-icon>
+                        <input
+                            id="password"
+                            matInput
+                            type="password"
+                            [formControlName]="'password'"
+                            #passwordField
+                            autocomplete="current-password"
+                            (keyup.enter)="signIn()">
+                        <button
+                            mat-icon-button
+                            type="button"
+                            (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
+                            matSuffix
+                            matTooltip="{{passwordField.type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña'}}">
                             <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
                             <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                         </button>
@@ -51,31 +66,62 @@
                         </mat-error>
                     </mat-form-field>
 
-                    <!-- Actions -->
-                    <div class="inline-flex items-center justify-center w-full mt-1.5">
-                        <!-- <mat-checkbox class="-ml-2" [color]="'primary'" [formControlName]="'rememberMe'">Remember me</mat-checkbox> -->
-                        <!-- <a class="text-md font-medium text-primary-500 hover:underline" [routerLink]="['/forgot-password']">¿Olvidaste tu contraseña?</a> -->
-                    </div>
-
-                    <!-- Submit button -->
-                    <button class="fuse-mat-button-large w-full mt-6 text-white" mat-flat-button [color]="'primary'" [disabled]="signInForm.disabled" (click)="signIn()">
-                        <span *ngIf="!signInForm.disabled">
+                    <!-- Submit button con mejor feedback visual -->
+                    <button
+                        class="fuse-mat-button-large w-full mt-6 text-white shadow-md hover:shadow-lg transition-shadow"
+                        mat-flat-button
+                        [color]="'primary'"
+                        [disabled]="signInForm.disabled || signInForm.invalid"
+                        (click)="signIn()">
+                        <span *ngIf="!signInForm.disabled" class="flex items-center justify-center">
+                            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:arrow-right-on-rectangle'"></mat-icon>
                             Iniciar Sesión
                         </span>
                         <mat-progress-spinner *ngIf="signInForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
                     </button>
                 </form>
 
-                <!-- <div class="w-full flex justify-center">
-                    <div class="w-20 pt-10">
-                        <img src="assets/images/logo/dolphinlogo.png" alt="">
-                    </div>
-                </div> -->
+                <!-- Footer con información de contacto -->
+                <div class="mt-8 text-center text-sm text-gray-500">
+                    <p>¿Problemas para acceder?</p>
+                    <p class="mt-1">Contacte al administrador del sistema</p>
+                </div>
+
+                <!-- Versión del sistema -->
+                <div class="mt-8 text-center text-xs text-gray-400">
+                    Sistema de Monitoreo v1.0
+                </div>
             </div>
         </div>
+
+        <!-- Panel izquierdo con imagen de fondo mejorada -->
         <div class="relative hidden md:flex flex-auto items-center justify-center h-full p-10 lg:px-28 overflow-hidden bg-capitolio bg-cover">
+            <!-- Overlay con gradiente para mejorar legibilidad -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-primary-900/30 z-0"></div>
+
             <!-- Content -->
             <div class="z-10 relative w-full max-w-lg">
+                <div class="text-3xl font-bold leading-tight text-white mb-6">
+                    Sistema de Monitore del Senado de la República
+                </div>
+                <div class="text-lg text-white/80 leading-relaxed">
+                    Acceda al sistema para gestionar sesiones y comisiones.
+                </div>
+                <!-- Badges informativos -->
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <div class="flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                        <mat-icon class="icon-size-5 text-white mr-2" [svgIcon]="'heroicons_outline:document-text'"></mat-icon>
+                        <span class="text-white text-sm font-medium">Grabacion en curso</span>
+                    </div>
+                    <div class="flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                        <mat-icon class="icon-size-5 text-white mr-2" [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+                        <span class="text-white text-sm font-medium">Gestión de sesiones</span>
+                    </div>
+                    <!-- <div class="flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                        <mat-icon class="icon-size-5 text-white mr-2" [svgIcon]="'heroicons_outline:video-camera'"></mat-icon>
+                        <span class="text-white text-sm font-medium">Ver información de sesiones en curso</span>
+                    </div> -->
+                </div>
             </div>
         </div>
     </div>

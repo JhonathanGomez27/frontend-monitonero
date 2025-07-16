@@ -30,6 +30,7 @@
         "crypto-js": "3.3.0",
         "fuse-angular": "file:",
         "highlight.js": "11.9.0",
+        "hls.js": "^1.1.5",
         "lodash-es": "4.17.21",
         "luxon": "3.4.4",
         "moment": "^2.30.1",

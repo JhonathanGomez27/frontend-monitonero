@@ -1,39 +1,182 @@
-<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto bg-white" cdkScrollable>
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto bg-gradient-to-br from-slate-50 via-primary-50 to-slate-100" cdkScrollable>
 
     <!-- Main -->
-    <div class="flex-auto p-6 md:px-26 lg:px-60 sm:py-10">
+    <div class="flex-auto p-6 md:px-12 lg:px-20 xl:px-32 sm:py-10">
 
         <!-- CONTENT GOES HERE -->
-        <div class="min-h-100">
+        <div class="h-full">
 
-            <!-- Titulo -->
-            <div class="flex flex-col items-start mb-6 w-full p-4 sm:bg-gradient-to-r sm:from-white sm:from-60% sm:to-primary-200 rounded-md">
-                <h2 class="text-4xl font-semibold text-primary-700">Portal de Monitoreo</h2>
-                <h3 class="text-4xl font-medium text-primary">CAMARA DE REPRESENTANTES</h3>
+            <!-- Header con título mejorado -->
+            <div class="relative mb-8 p-8 bg-white rounded-3xl shadow-xl overflow-hidden">
+                <!-- Barra decorativa superior -->
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-800 via-primary-600 to-amber-400"></div>
+
+                <!-- Patrón de fondo sutil -->
+                <div class="absolute inset-0 opacity-5">
+                    <div class="absolute inset-0" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(59, 130, 246, 0.1) 20px, rgba(59, 130, 246, 0.1) 40px);"></div>
+                </div>
+
+                <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center mb-4">
+                            <div class="mr-4 p-3 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl shadow-lg">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h1 class="text-3xl sm:text-4xl font-bold text-primary-900 mb-1 tracking-tight">
+                                    Portal de Monitoreo
+                                </h1>
+                                <h2 class="text-xl sm:text-2xl font-semibold text-primary-700">
+                                    SENADO DE LA REPÚBLICA
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="h-1 w-32 bg-gradient-to-r from-primary-600 to-amber-400 rounded-full"></div>
+                    </div>
+
+                    <!-- Badge o información adicional -->
+                    <div class="mt-6 sm:mt-0 sm:ml-8">
+                        <div class="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-800 rounded-full text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Sistema Activo
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- contenido -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-4 sm:pt-7">
+            <!-- Grid de comisiones mejorado -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <ng-container *ngFor="let item of comisiones">
-                    <div class="border border-solid border-gray-200 p-4 rounded-md overflow-hidden cursor-pointer hover:shadow-xl hover:bg-slate-100" [routerLink]="['./', item.id]">
-                        <!-- icono -->
-                         <div class="flex flex-row justify-between items-center">
-                            <div class="flex justify-center">
-                                <mat-icon class="icon-size-10" svgIcon="heroicons_outline:building-library" [color]="'primary'"></mat-icon>
-                            </div>
-                            <div class="flex justify-center">
-                                <div [ngClass]="{'bg-gray-400': item.estado === 'No transmitiendo'
-                                        , 'bg-green-500': item.estado === 'grabando', 'bg-yellow-500': item.estado === 'preparado'
-                                    }" class="p-5 rounded-full"></div>
-                            </div>
-                         </div>
+                    <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl border border-gray-100 overflow-hidden cursor-pointer transform transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+                         [routerLink]="['./', item.id]">
 
-                         <!-- titulo -->
-                          <div class="flex justify-start font-bold text-xl mt-4 items-center">
-                            {{item.nombre}}
-                          </div>
+                        <!-- Indicador de estado superior -->
+                        <div class="absolute top-0 left-0 right-0 h-1 transition-all duration-300"
+                             [ngClass]="{
+                                'bg-gray-400': item.estado === 'No transmitiendo',
+                                'bg-gradient-to-r from-green-400 to-green-600': item.estado === 'grabando',
+                                'bg-gradient-to-r from-yellow-400 to-yellow-600': item.estado === 'preparado'
+                             }">
+                        </div>
+
+                        <div class="p-6">
+                            <!-- Header de la tarjeta -->
+                            <div class="flex items-center justify-between mb-6">
+                                <!-- Icono principal -->
+                                <div class="flex-shrink-0">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                                        <mat-icon class="text-white text-3xl" svgIcon="heroicons_outline:building-library"></mat-icon>
+                                    </div>
+                                </div>
+
+                                <!-- Indicador de estado -->
+                                <div class="flex items-center space-x-2">
+                                    <div class="relative">
+                                        <div [ngClass]="{
+                                                'bg-gray-400': item.estado === 'No transmitiendo',
+                                                'bg-green-500 animate-pulse': item.estado === 'grabando',
+                                                'bg-yellow-500': item.estado === 'preparado'
+                                             }"
+                                             class="w-4 h-4 rounded-full transition-all duration-300">
+                                        </div>
+                                        <!-- Anillo de pulso para estado grabando -->
+                                        <div *ngIf="item.estado === 'grabando'"
+                                             class="absolute inset-0 w-4 h-4 bg-green-500 rounded-full animate-ping opacity-75">
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-medium text-gray-600"
+                                          [ngClass]="{
+                                            'text-gray-600': item.estado === 'No transmitiendo',
+                                            'text-green-600': item.estado === 'grabando',
+                                            'text-yellow-600': item.estado === 'preparado'
+                                          }">
+                                        {{item.estado}}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Título de la comisión -->
+                            <div class="mb-4">
+                                <h3 class="text-lg font-bold text-gray-900 group-hover:text-primary-900 transition-colors duration-300 line-clamp-2">
+                                    {{item.nombre}}
+                                </h3>
+                            </div>
+
+                            <!-- Footer con información adicional -->
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-gray-500 text-sm">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>En tiempo real</span>
+                                </div>
+
+                                <!-- Flecha de navegación -->
+                                <div class="flex items-center text-primary-600 group-hover:text-primary-800 transition-colors duration-300">
+                                    <span class="text-sm font-medium mr-1">Ver detalles</span>
+                                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overlay de hover -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-600/5 to-primary-800/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                     </div>
                 </ng-container>
+            </div>
+
+            <!-- Sección de información adicional (opcional) -->
+            <div class="mt-12  grid-cols-1 md:grid-cols-3 gap-6 hidden">
+                <!-- Estadística 1 -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Sesiones Activas</p>
+                            <p class="text-2xl font-bold text-green-600">En vivo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadística 2 -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Estado del Sistema</p>
+                            <p class="text-2xl font-bold text-yellow-600">Monitoreando</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadística 3 -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Total Comisiones</p>
+                            <p class="text-2xl font-bold text-primary-600">{{comisiones?.length || 0}}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

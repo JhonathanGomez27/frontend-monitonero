@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { finalize, Subject, takeUntil, takeWhile, tap, timer } from 'rxjs';
@@ -9,6 +9,8 @@ import { FormatTimePipe } from 'app/shared/pipes/format-time.pipe';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
+import Hls from 'hls.js';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-info-sesion',
@@ -16,7 +18,7 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, MatButtonModule, ShowForRolesDirective, FormatTimePipe, RouterLink, MatIconModule],
   templateUrl: './info-sesion.component.html',
 })
-export class InfoSesionComponent implements OnInit, OnDestroy{
+export class InfoSesionComponent implements OnInit, OnDestroy, AfterViewInit{
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -45,6 +47,8 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
 
     init: boolean = false;
     intervalId: any = null;
+
+    showVideo: boolean = false;
 
     constructor(
         private _fuseConfirmationService: FuseConfirmationService,
@@ -77,46 +81,52 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
                 // this.getStatisticsData();
                 // this.takeScreenShot();
                 this.init = true;
-                this.takeScreenShot();
+                this.showVideo = true;
+                // this.takeScreenShot();
             }
 
             // this.ejecutarAccion();
             if(this.estadoSesion === 'Transmisión finalizada'){
                 this.countdown = 0;
                 this.imgbase64 = '';
+                this.showVideo = false;
                 this.getStatusSesion();
             }
             this._changeDetectorRef.markForCheck();
         });
 
-        let minutos = 1;
-        let milisegundos = minutos * this.interval * 1000;
+        // let minutos = 1;
+        // let milisegundos = minutos * this.interval * 1000;
 
-        timer(1000, 1000).pipe(finalize(() => {
-                this.countdown = this.interval;
-        }),
-        takeWhile(() => this.countdown > 0),
-        takeUntil(this._unsubscribeAll),
-        tap(() => this.countdown--)).subscribe();
+        // timer(1000, 1000).pipe(finalize(() => {
+        //         this.countdown = this.interval;
+        // }),
+        // takeWhile(() => this.countdown > 0),
+        // takeUntil(this._unsubscribeAll),
+        // tap(() => this.countdown--)).subscribe();
 
-        this.intervalId =  setInterval(() => {
-            if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada'){
-                // this.getStatisticsData();
-                // Redirect after the countdown
-                timer(1000, 1000).pipe(finalize(() => {
-                        this.countdown = this.interval;
-                    }),
-                    takeWhile(() => this.countdown > 0),
-                    takeUntil(this._unsubscribeAll),
-                    tap(() => this.countdown--)).subscribe();
+        // this.intervalId =  setInterval(() => {
+        //     if(this.estadoSesion !== 'No transmitiendo' && this.estadoSesion !== 'Transmisión finalizada'){
+        //         // this.getStatisticsData();
+        //         // Redirect after the countdown
+        //         timer(1000, 1000).pipe(finalize(() => {
+        //                 this.countdown = this.interval;
+        //             }),
+        //             takeWhile(() => this.countdown > 0),
+        //             takeUntil(this._unsubscribeAll),
+        //             tap(() => this.countdown--)).subscribe();
 
-                this.takeScreenShot();
-            }
+        //         this.takeScreenShot();
+        //     }
 
-            if(!this.init && this.estadoSesion === 'No transmitiendo'){
-                this.updateSesionData();
-            }
-        }, milisegundos);
+        //     if(!this.init && this.estadoSesion === 'No transmitiendo'){
+        //         this.updateSesionData();
+        //     }
+        // }, milisegundos);
+    }
+
+    ngAfterViewInit(): void {
+        this.initializeVideoStream();
     }
 
     ngOnDestroy(): void {
@@ -503,5 +513,240 @@ export class InfoSesionComponent implements OnInit, OnDestroy{
         const nombre = `SB-${this.sesion.fecha_inicio_sesion}-${this.sesion.tema.replace(/ /g, '_')}`;
 
         return nombre;
+    }
+
+    private initializeVideoStream(): void {
+        const video = document.getElementById('obs-video') as HTMLVideoElement;
+
+        if(!video) {
+            console.error('Video element not found');
+            return;
+        }
+
+        if (Hls.isSupported()) {
+            this.initializeHLS(video);
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            this.initializeNativeHLS(video);
+        } else {
+            console.error('HLS is not supported in this browser.');
+        }
+    }
+
+    private initializeHLS(video: HTMLVideoElement): void {
+        const hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: true,
+            backBufferLength: 90,
+            manifestLoadingRetryDelay: 1000,
+            manifestLoadingMaxRetry: 10,
+            levelLoadingRetryDelay: 1000,
+            levelLoadingMaxRetry: 10,
+            fragLoadingRetryDelay: 1000,
+            fragLoadingMaxRetry: 10
+        });
+
+        let retryCount = 0;
+        const maxRetries = 30; // 30 intentos = 5 minutos con intervalos de 10 segundos
+        const retryInterval = 10000; // 10 segundos
+
+        const loadStream = () => {
+            console.log(`Intentando cargar stream (intento ${retryCount + 1}/${maxRetries})`);
+
+            hls.loadSource(environment.sourceRmtp);
+            hls.attachMedia(video);
+
+            // Timeout para detectar si la carga falla
+            const loadTimeout = setTimeout(() => {
+                if (video.readyState === 0) {
+                    console.log('Stream no disponible, reintentando...');
+                    this.retryConnection(hls, video, retryCount, maxRetries, retryInterval, loadStream);
+                }
+            }, 5000);
+
+            // Eventos de HLS
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                console.log('Manifest cargado correctamente');
+                clearTimeout(loadTimeout);
+                retryCount = 0; // Reset retry count on success
+
+                // Intentar reproducir automáticamente
+                video.play().catch(error => {
+                    console.log('Autoplay bloqueado:', error);
+                    // Mostrar mensaje al usuario para hacer click y activar el video
+                    this.showPlayButton(video);
+                });
+            });
+
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                clearTimeout(loadTimeout);
+                console.error('Error HLS:', data);
+
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            console.log('Error de red, reintentando...');
+                            this.retryConnection(hls, video, retryCount, maxRetries, retryInterval, loadStream);
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            console.log('Error de media, intentando recuperar...');
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            console.log('Error fatal, reintentando conexión...');
+                            this.retryConnection(hls, video, retryCount, maxRetries, retryInterval, loadStream);
+                            break;
+                    }
+                }
+            });
+
+            // Evento cuando el video está listo para reproducir
+            video.addEventListener('canplay', () => {
+                console.log('Video listo para reproducir');
+                this.showVideo = true;
+                this._changeDetectorRef.markForCheck();
+            });
+
+            // Evento cuando el video se está reproduciendo
+            video.addEventListener('playing', () => {
+                console.log('Video reproduciéndose');
+            });
+
+            // Evento cuando el video se pausa por falta de datos
+            video.addEventListener('waiting', () => {
+                console.log('Video esperando datos...');
+            });
+        };
+
+        loadStream();
+    }
+
+    private initializeNativeHLS(video: HTMLVideoElement): void {
+        let retryCount = 0;
+        const maxRetries = 30;
+        const retryInterval = 10000;
+
+        const loadStream = () => {
+            console.log(`Intentando cargar stream nativo (intento ${retryCount + 1}/${maxRetries})`);
+
+            video.src = environment.sourceRmtp;
+
+            const loadTimeout = setTimeout(() => {
+                if (video.readyState === 0) {
+                    console.log('Stream no disponible, reintentando...');
+                    this.retryNativeConnection(video, retryCount, maxRetries, retryInterval, loadStream);
+                }
+            }, 5000);
+
+            video.addEventListener('canplay', () => {
+                console.log('Video nativo listo para reproducir');
+                clearTimeout(loadTimeout);
+                retryCount = 0;
+                this.showVideo = true;
+                this._changeDetectorRef.markForCheck();
+
+                video.play().catch(error => {
+                    console.log('Autoplay bloqueado:', error);
+                    this.showPlayButton(video);
+                });
+            });
+
+            video.addEventListener('error', () => {
+                clearTimeout(loadTimeout);
+                console.error('Error en video nativo');
+                this.retryNativeConnection(video, retryCount, maxRetries, retryInterval, loadStream);
+            });
+        };
+
+        loadStream();
+    }
+
+    private retryConnection(hls: any, video: HTMLVideoElement, retryCount: number, maxRetries: number, retryInterval: number, loadStream: () => void): void {
+        retryCount++;
+
+        if (retryCount >= maxRetries) {
+            console.error('Máximo número de reintentos alcanzado');
+            this.Toast.fire({
+                icon: 'error',
+                title: 'No se pudo conectar con la transmisión',
+                text: 'Por favor, verifica que OBS esté transmitiendo correctamente'
+            });
+            return;
+        }
+
+        // Destruir la instancia HLS actual
+        hls.destroy();
+
+        // Mostrar mensaje de reintento
+        this.Toast.fire({
+            icon: 'info',
+            title: `Reintentando conexión (${retryCount}/${maxRetries})`,
+            timer: 2000
+        });
+
+        setTimeout(() => {
+            this.initializeHLS(video);
+        }, retryInterval);
+    }
+
+    private retryNativeConnection(video: HTMLVideoElement, retryCount: number, maxRetries: number, retryInterval: number, loadStream: () => void): void {
+        retryCount++;
+
+        if (retryCount >= maxRetries) {
+            console.error('Máximo número de reintentos alcanzado');
+            this.Toast.fire({
+                icon: 'error',
+                title: 'No se pudo conectar con la transmisión'
+            });
+            return;
+        }
+
+        this.Toast.fire({
+            icon: 'info',
+            title: `Reintentando conexión (${retryCount}/${maxRetries})`,
+            timer: 2000
+        });
+
+        setTimeout(loadStream, retryInterval);
+    }
+
+    private showPlayButton(video: HTMLVideoElement): void {
+        // Crear overlay para el botón de play si no existe
+        let playOverlay = document.getElementById('play-overlay');
+        if (!playOverlay) {
+            playOverlay = document.createElement('div');
+            playOverlay.id = 'play-overlay';
+            playOverlay.className = 'absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 cursor-pointer z-10';
+            playOverlay.innerHTML = `
+                <div class="text-white text-center">
+                    <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <p class="text-lg font-semibold">Click para reproducir</p>
+                </div>
+            `;
+
+            playOverlay.addEventListener('click', () => {
+                video.play().then(() => {
+                    playOverlay?.remove();
+                });
+            });
+
+            video.parentElement?.appendChild(playOverlay);
+        }
+    }
+
+    // Método para reiniciar manualmente la conexión (puedes llamarlo desde un botón)
+    restartVideoConnection(): void {
+        const video = document.getElementById('obs-video') as HTMLVideoElement;
+        if (video) {
+            // Limpiar el video actual
+            video.src = '';
+            video.load();
+
+            // Reinicializar
+            setTimeout(() => {
+                this.initializeVideoStream();
+            }, 1000);
+        }
     }
 }
