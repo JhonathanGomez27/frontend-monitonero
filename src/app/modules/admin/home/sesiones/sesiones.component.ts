@@ -129,7 +129,7 @@ export class SesionesComponent implements OnInit, OnDestroy{
         const dialogRef = this.dialog.open(ModalCrearEditarSesionComponent, {
             width: '600px',
             disableClose: true,
-            data: {accion: 'crear', title: 'Crear sesión', comision: 1},
+            data: {accion: 'crear', title: 'Crear sesión', comision: this.comision.id},
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -141,7 +141,7 @@ export class SesionesComponent implements OnInit, OnDestroy{
         const dialogRef = this.dialog.open(ModalCrearEditarSesionComponent, {
             width: '600px',
             disableClose: true,
-            data: {accion: 'editar', title: 'Editar sesión', data: {tema: sesion.tema, fecha: sesion.fecha_inicio_sesion, hora: sesion.hora_inicio_sesion, responsable: sesion.responsable, id: sesion.id, comision: 1}}
+            data: {accion: 'editar', title: 'Editar sesión', data: {tema: sesion.tema, fecha: sesion.fecha_inicio_sesion, hora: sesion.hora_inicio_sesion, responsable: sesion.responsable, id: sesion.id, comision: this.comision.id}}
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -156,7 +156,7 @@ export class SesionesComponent implements OnInit, OnDestroy{
     obtenerSesiones(pagina:any): void {
         this.loading = true;
 
-        this._homeService.getAllSesionesPaginated(pagina).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+        this._homeService.getAllSesionesPaginated(pagina, this.comision.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
             (response:any) => {
                 this.loading = false;
                 this._homeService.sesiones = response;
@@ -170,7 +170,7 @@ export class SesionesComponent implements OnInit, OnDestroy{
     getSesionesSinFiltro(pagina:any): void {
         this.loading = true;
 
-        this._homeService.getSesionesSinFiltro(pagina).pipe(takeUntil(this._unsubscribeAll)).subscribe(
+        this._homeService.getSesionesSinFiltro(pagina, this.comision.id).pipe(takeUntil(this._unsubscribeAll)).subscribe(
             (response:any) => {
                 this.loading = false;
                 this._homeService.sesiones = response;

@@ -62,34 +62,34 @@ export class HomeService {
         );
     }
 
-    getAllSesiones(page:any): Observable<any> {
+    getAllSesiones(page:any, comision: any): Observable<any> {
         let params = new HttpParams();
         params = params.set('page', page);
         params = params.set('limit', this.limit);
 
-        return this._httpCliente.get(`${this.url}sesiones`, {params}).pipe(
+        return this._httpCliente.get(`${this.url}sesiones/${comision}`, {params}).pipe(
             tap((response: any) => {
                 this._sesiones.next(response);
             })
         );
     }
 
-    getAllSesionesPaginated(page: any): Observable<any> {
+    getAllSesionesPaginated(page: any, comision: any): Observable<any> {
         let params = new HttpParams();
         params = params.set('page', page);
         params = params.set('limit', this.limit);
-        return this._httpCliente.get(`${this.url}sesiones`, {params});
+        return this._httpCliente.get(`${this.url}sesiones/${comision}`, {params});
     }
 
-    getSesionesSinFiltro(page:any): Observable<any> {
+    getSesionesSinFiltro(page:any, comision: any): Observable<any> {
         let params = new HttpParams();
         params = params.set('page', page);
         params = params.set('limit', this.limit);
-        return this._httpCliente.get(`${this.url}sesiones/all`, {params});
+        return this._httpCliente.get(`${this.url}sesiones/all/${comision}`, {params});
     }
 
     getSesionesByIdLoad(id: any): Observable<any> {
-        return this._httpCliente.get(`${this.url}sesiones/${id}`).pipe(
+        return this._httpCliente.get(`${this.url}sesiones/${id}/findOne`).pipe(
             tap((response: any) => {
                 this._sesion.next(response);
             })
@@ -97,7 +97,7 @@ export class HomeService {
     }
 
     getSesionById(id: any): Observable<any> {
-        return this._httpCliente.get(`${this.url}sesiones/${id}`);
+        return this._httpCliente.get(`${this.url}sesiones/${id}/findOne`);
     }
 
     crearSesion(data: any): Observable<any> {

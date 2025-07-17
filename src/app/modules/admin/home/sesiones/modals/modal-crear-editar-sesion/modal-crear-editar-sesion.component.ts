@@ -47,6 +47,8 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
 
     minDate = new Date();
 
+    comision: any = null;
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<ModalCrearEditarSesionComponent>,
@@ -56,6 +58,7 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
     ) {
         this.title = data.title;
         this.accion = data.accion;
+        this.comision = data.comision;
 
         this.sesionForm = this._formBuilder.group({
             tema: ['', Validators.required],
@@ -119,9 +122,10 @@ export class ModalCrearEditarSesionComponent implements OnInit, OnDestroy {
             responsable : dataForm.responsable,
             fecha_inicio_sesion : this.transformDate(dataForm.fecha._d),
             hora_inicio_sesion : dataForm.hora,
-            comision_id: 1
+            comision_id: this.comision
         }
 
+        console.log(data);
         // return;
 
         if(this.data.accion === 'crear') {

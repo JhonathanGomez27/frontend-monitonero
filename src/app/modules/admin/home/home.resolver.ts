@@ -15,7 +15,12 @@ export const getAllSesionesResolver: ResolveFn<any> = (route: ActivatedRouteSnap
         page = route.queryParamMap.get('page');
     }
 
-    return inject(HomeService).getAllSesiones(page);
+    let comision:any = route.paramMap.get('comision');
+    if(comision === 'all'){
+        comision = '';
+    }
+
+    return inject(HomeService).getAllSesiones(page, comision);
 }
 
 export const getSesionResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot ) => {
