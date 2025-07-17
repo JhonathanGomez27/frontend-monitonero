@@ -1,10 +1,9 @@
-const host = 'localhost';
-const hostRmtp = 'localhost';
+const config = window['appConfig'] || { host: 'localhost', hostRmtp: 'localhost' };
 
 export const environment = {
-    urlAuth: `http://${host}:3000/monitoreo/authentication/`,
-    url: `http://${host}:3000/monitoreo/`,
+    urlAuth: `http://${config.host}:3000/monitoreo/authentication/`,
+    url: `http://${config.host}:3000/monitoreo/`,
     pagination: 20,
     production: true,
-    sourceRmtp: `http://${hostRmtp}:8080/hls/stream.m3u8`
+    sourceRmtp: `http://${config.hostRmtp}:8080/hls/stream.m3u8`
 };
